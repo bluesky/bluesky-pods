@@ -2,12 +2,26 @@ import json
 
 import redis
 
-from bluesky.callbacks.zmq import RemoteDispatcher
 from bluesky_adaptive import recommendations
 from bluesky_adaptive import per_start
 
 
-d = RemoteDispatcher("127.0.0.1:5678", prefix=b"adaptive")
+import msgpack
+import msgpack_numpy as mpn
+from functools import partial
+from bluesky_kafka import RemoteDispatcher
+
+
+d = RemoteDispatcher(
+    topics=["adaptive"],
+    bootstrap_servers="127.0.0.1:9092",
+    group_id="kafka-unit-test-group-id",
+    # "latest" should always work but
+    # has been failing on Linux, passing on OSX
+    consumer_config={"auto.offset.reset": "latest"},
+    polling_duration=1.0,
+    deserializer=partial(msgpack.loads, object_hook=mpn.decode),
+)
 
 
 class RedisQueue:
