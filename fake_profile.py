@@ -1,17 +1,22 @@
 import logging
 import uuid
 import json
+from functools import partial
 from queue import Empty
 
 import redis
+import msgpack
+import msgpack_numpy as mpn
 
 from suitcase.mongo_normalized import Serializer
 from bluesky import RunEngine
 import bluesky.plans as bp
 
 
-from bluesky.callbacks.zmq import Publisher
 from bluesky.callbacks.best_effort import BestEffortCallback
+
+from bluesky.callbacks.zmq import Publisher as zmqPublisher
+from bluesky_kafka import Publisher as kafkaPublisher
 
 from databroker._drivers.mongo_normalized import BlueskyMongoCatalog
 
@@ -25,7 +30,21 @@ mds = f"mongodb://localhost:27017/databroker-test-{uuid.uuid4()}"
 fs = f"mongodb://localhost:27017/databroker-test-{uuid.uuid4()}"
 serializer = Serializer(mds, fs)
 catalog = BlueskyMongoCatalog(mds, fs)
-p = Publisher("127.0.0.1:4567")
+
+zmq_publisher = zmqPublisher("127.0.0.1:4567")
+kafka_publisher = kafkaPublisher(
+    topic="all",
+    bootstrap_servers="127.0.0.1:9092",
+    key="kafka-unit-test-key",
+    # work with a single broker
+    producer_config={
+        "acks": 1,
+        "enable.idempotence": False,
+        "request.timeout.ms": 5000,
+    },
+    serializer=partial(msgpack.dumps, default=mpn.encode),
+)
+
 bec = BestEffortCallback()
 
 logger = logging.getLogger("databroker")
@@ -35,7 +54,8 @@ handler.setLevel("DEBUG")
 logger.addHandler(handler)
 
 RE.subscribe(serializer)
-RE.subscribe(p)
+RE.subscribe(zmq_publisher)
+RE.subscribe(kafka_publisher)
 RE.subscribe(bec)
 
 to_brains = Publisher("127.0.0.1:4567", prefix=b"adaptive")
