@@ -1,5 +1,4 @@
 import logging
-import uuid
 import json
 from functools import partial
 from queue import Empty
@@ -8,7 +7,6 @@ import redis
 import msgpack
 import msgpack_numpy as mpn
 
-from suitcase.mongo_normalized import Serializer
 from bluesky import RunEngine
 import bluesky.plans as bp
 
@@ -18,20 +16,17 @@ from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.zmq import Publisher as zmqPublisher
 from bluesky_kafka import Publisher as kafkaPublisher
 
-from databroker._drivers.mongo_normalized import BlueskyMongoCatalog
-
 from bluesky_adaptive.per_start import adaptive_plan
 
 from ophyd.sim import *
 
 from bluesky_queueserver.plan import configure_plan
 
-RE = RunEngine()
+import databroker
 
-mds = f"mongodb://localhost:27017/mad-bluesky-documents"
-fs = f"mongodb://localhost:27017/mad-bluesky-documents"
-serializer = Serializer(mds, fs)
-catalog = BlueskyMongoCatalog(mds, fs)
+db = databroker.catalog['MAD']
+
+RE = RunEngine()
 
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
@@ -55,7 +50,7 @@ handler = logging.StreamHandler()
 handler.setLevel("DEBUG")
 logger.addHandler(handler)
 
-RE.subscribe(serializer)
+RE.subscribe(db.v1.insert)
 RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 RE.subscribe(bec)

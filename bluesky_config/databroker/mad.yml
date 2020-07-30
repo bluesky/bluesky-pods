@@ -1,0 +1,6 @@
+sources:
+  MAD:
+    driver: bluesky-mongo-normalized-catalog
+    args:
+      metadatastore_db: mongodb://localhost:27017/mad-bluesky-documents
+      asset_registry_db: mongodb://localhost:27017/mad-bluesky-documents
