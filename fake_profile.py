@@ -60,7 +60,7 @@ RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 RE.subscribe(bec)
 
-to_brains = kafka_publisher = kafkaPublisher(
+to_brains = kafkaPublisher(
     topic="adaptive",
     bootstrap_servers="127.0.0.1:9092",
     key="kafka-unit-test-key",
@@ -101,7 +101,11 @@ from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
 # RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
 
 
-queue_sever_plan = configure_plan({d.name: d for d in [motor, det]}, {'count': bp.count, 'scan': bp.scan}, 'http://0.0.0.0:8081')
+queue_sever_plan = configure_plan(
+    {d.name: d for d in [motor, det]},
+    {"count": bp.count, "scan": bp.scan},
+    "http://0.0.0.0:8081",
+)
 
 # do from another
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'
