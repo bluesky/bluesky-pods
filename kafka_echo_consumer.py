@@ -5,7 +5,7 @@ from bluesky_kafka import RemoteDispatcher
 
 
 kafka_dispatcher = RemoteDispatcher(
-    topics=["all"],
+    topics=["mad.bluesky.documents"],
     bootstrap_servers="127.0.0.1:9092",
     group_id="kafka-unit-test-group-id",
     # "latest" should always work but

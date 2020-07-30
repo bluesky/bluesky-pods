@@ -28,14 +28,14 @@ from bluesky_queueserver.plan import configure_plan
 
 RE = RunEngine()
 
-mds = f"mongodb://localhost:27017/databroker-test-{uuid.uuid4()}"
-fs = f"mongodb://localhost:27017/databroker-test-{uuid.uuid4()}"
+mds = f"mongodb://localhost:27017/mad-bluesky-documents"
+fs = f"mongodb://localhost:27017/mad-bluesky-documents"
 serializer = Serializer(mds, fs)
 catalog = BlueskyMongoCatalog(mds, fs)
 
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
-    topic="all",
+    topic="mad.bluesky.documents",
     bootstrap_servers="127.0.0.1:9092",
     key="kafka-unit-test-key",
     # work with a single broker
