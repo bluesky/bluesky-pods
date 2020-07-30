@@ -24,6 +24,8 @@ from bluesky_adaptive.per_start import adaptive_plan
 
 from ophyd.sim import *
 
+from bluesky_queueserver.plan import configure_plan
+
 RE = RunEngine()
 
 mds = f"mongodb://localhost:27017/databroker-test-{uuid.uuid4()}"
@@ -97,3 +99,10 @@ from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
 
 # you may have to run this twice to "prime the topics" the first time you run it
 # RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
+
+
+queue_sever_plan = configure_plan({d.name: d for d in [motor, det]}, {'count': bp.count, 'scan': bp.scan}, 'http://0.0.0.0:8081')
+
+# do from another
+# http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'
+# http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"count", "args":[["det"]]}'
