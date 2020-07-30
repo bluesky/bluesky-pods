@@ -46,7 +46,7 @@ should now take 17 runs stepping the motor by 1.5.  The data flow is
   | ---> mongo
   | ---> live table
   |
-  RE - zmq -> proxy - zmq -> adaptive_server
+  RE ---- kafka broker -----> adaptive_server
   ^                                  |
   | < -------- redis --------<-----< |
 
