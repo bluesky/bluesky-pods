@@ -4,3 +4,4 @@ bluesky_config/**/db/
 bluesky_config/**/security/
 bluesky_config/**/log/
 bluesky_config/**/pid/
+__pycache__

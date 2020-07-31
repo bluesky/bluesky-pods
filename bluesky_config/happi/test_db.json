@@ -1,0 +1,236 @@
+{
+  "det": {
+    "_id": "det",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.DetWithCountTime",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "det",
+    "type": "OphydItem"
+  },
+  "motor": {
+    "_id": "motor",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SynAxisNoPosition",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "motor",
+    "type": "OphydItem"
+  },
+  "motor1": {
+    "_id": "motor1",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SynAxisNoHints",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "motor1",
+    "type": "OphydItem"
+  },
+  "motor2": {
+    "_id": "motor2",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SynAxisNoHints",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "motor2",
+    "type": "OphydItem"
+  },
+  "motor3": {
+    "_id": "motor3",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SynAxis",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "motor3",
+    "type": "OphydItem"
+  },
+  "pseudo1x3": {
+    "_id": "pseudo1x3",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SPseudo1x3",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "pseudo1x3",
+    "type": "OphydItem"
+  },
+  "pseudo3x3": {
+    "_id": "pseudo3x3",
+    "active": true,
+    "args": [],
+    "device_class": "ophyd.sim.SPseudo3x3",
+    "documentation": null,
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "name": "pseudo3x3",
+    "type": "OphydItem"
+  },
+  "ph": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "phaoeuaoeu",
+    "device_class": "localdevs.Det",
+    "name": "ph",
+    "prefix": "mini:ph"
+  },
+  "edge": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "edge",
+    "device_class": "localdevs.Det",
+    "name": "edge",
+    "prefix": "mini:edge"
+  },
+  "slit": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "slit",
+    "device_class": "localdevs.Det",
+    "name": "slit",
+    "prefix": "mini:slit"
+  },
+  "spot": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "spot",
+    "device_class": "localdevs.Spot",
+    "name": "spot",
+    "prefix": "mini:dot"
+  },
+  "motor_ph": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "motor_ph",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "motor_ph",
+    "prefix": "mini:ph:mtr"
+  },
+  "motor_edge": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "motor_edge",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "motor_edge",
+    "prefix": "mini:edge:mtr"
+  },
+  "motor_slit": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "motor_slit",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "motor_slit",
+    "prefix": "mini:slit:mtr"
+  },
+  "motor_spotx": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "motor_spotx",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "motor_spotx",
+    "prefix": "mini:dot:mtrx"
+  },
+  "motor_spoty": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "motor_spoty",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "motor_spoty",
+    "prefix": "mini:dot:mtry"
+  },
+  "I": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "Iaoeuaoeu",
+    "device_class": "ophyd.signal.EpicsSignal",
+    "name": "I",
+    "prefix": "mini:current"
+  }
+}

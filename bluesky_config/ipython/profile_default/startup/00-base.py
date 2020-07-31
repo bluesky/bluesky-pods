@@ -3,6 +3,8 @@ import json
 from functools import partial
 from queue import Empty
 
+import IPython
+
 import redis
 import msgpack
 import msgpack_numpy as mpn
@@ -18,12 +20,15 @@ from bluesky_kafka import Publisher as kafkaPublisher
 
 from bluesky_adaptive.per_start import adaptive_plan
 
-from ophyd.sim import *
-
 from bluesky_queueserver.plan import configure_plan
 
 import databroker
+import happi
+import happi.loader
 
+ip = IPython.get_ipython()
+
+hclient = happi.Client(path='/usr/local/share/happi/test_db.json')
 db = databroker.catalog['MAD']
 
 RE = RunEngine()
@@ -91,16 +96,18 @@ class RedisQueue:
 
 
 from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
-
 # you may have to run this twice to "prime the topics" the first time you run it
 # RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
 
 
+devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
 queue_sever_plan = configure_plan(
-    {d.name: d for d in [motor, det]},
+    devs,
     {"count": bp.count, "scan": bp.scan},
     "http://0.0.0.0:8081",
 )
+
+ip.user_ns.update(devs)
 
 # do from another
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'
