@@ -83,7 +83,7 @@
     "name": "pseudo3x3",
     "type": "OphydItem"
   },
-  "ph": {
+  "pinhole": {
     "active": true,
     "documentation": null,
     "args": [
@@ -93,9 +93,9 @@
       "name": "{{name}}"
     },
     "type": "OphydItem",
-    "_id": "phaoeuaoeu",
+    "_id": "pinhole",
     "device_class": "localdevs.Det",
-    "name": "ph",
+    "name": "pinhole",
     "prefix": "mini:ph"
   },
   "edge": {
@@ -230,7 +230,7 @@
     "type": "OphydItem",
     "_id": "Iaoeuaoeu",
     "device_class": "ophyd.signal.EpicsSignal",
-    "name": "I",
+    "name": "beam_current",
     "prefix": "mini:current"
   }
 }
