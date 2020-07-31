@@ -82,7 +82,7 @@ the keys that the adatptive code is expecting.
 and run
 
 ```python
-RE(queue_sever_plan())
+RE(queue_server_plan())
 ```
 
 On your host machine run:
