@@ -3,6 +3,14 @@
 This is a set of buildah and podman scripts that will stand up a pod that
 can run a Bluesky session and an out-of-core adaptive plan
 
+## Getting podman
+
+Podman and buildah are packaged on many Linux distributions, one pitfall once
+they are installed is to ensure your rootless environment is properly setup.
+See [rootless tutorial](https://github.com/containers/podman/blob/master/docs/tutorials/rootless_tutorial.md)
+for a useful guide, paying particular attention to setting up `/etc/subuid` and
+`/etc/subgid` in order to build and run images on your system.
+
 ## Build the containers
 
 ```sh
