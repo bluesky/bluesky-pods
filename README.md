@@ -45,10 +45,11 @@ RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains
 should now take 17 runs stepping the motor by 1.5.  The data flow is
 
 ```
-  | ---> kafka to the edge
+  | ---> kafka to the edge  --- /exposed ports on edge/ --> external consumers
   | ---> mongo
   | ---> live table
   |
+  ^
   RE ---- kafka broker -----> adaptive_server
   ^                                  |
   | < -------- redis --------<-----< |
@@ -86,4 +87,17 @@ On your host machine run:
 
 ```bash
 python kafka_echo_consumer.py
+```
+
+
+The data flow is
+
+```
+  | ---> kafka to the edge ----------- /exposed ports on edge/ ---> external consumers
+  | ---> mongo                                                                 |
+  | ---> live table                                                            |
+  ^                                                                            ↓
+  RE < --- http --- queueserver < ---- / http from edge / <-------- http POST {json}
+
+
 ```
