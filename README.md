@@ -7,7 +7,7 @@ can run a Bluesky session and an out-of-core adaptive plan
 
 ```sh
 # this is fedora + some heavy weight Python
-bash uild_bluesky_base_image.sh
+bash build_bluesky_base_image.sh
 # installs the rest of our stack on top of the base image
 bash build_bluesky_image.sh
 # build an image with caproto installed
