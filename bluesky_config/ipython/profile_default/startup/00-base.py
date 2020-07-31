@@ -101,7 +101,7 @@ from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
 
 
 devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
-queue_sever_plan = configure_plan(
+queue_server_plan = configure_plan(
     devs,
     {"count": bp.count, "scan": bp.scan},
     "http://0.0.0.0:8081",
