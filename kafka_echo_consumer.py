@@ -1,6 +1,9 @@
+import datetime
+from functools import partial
+
 import msgpack
 import msgpack_numpy as mpn
-from functools import partial
+
 from bluesky_kafka import RemoteDispatcher
 
 
@@ -17,7 +20,11 @@ kafka_dispatcher = RemoteDispatcher(
 
 
 def echo(name, doc):
-    print(f"got a {name} document")
+    ts = doc.get("time", 0)
+    print(
+        f"at {datetime.datetime.now().isoformat()} got a {name} document "
+        f"from {datetime.datetime.fromtimestamp(ts)}"
+    )
 
 
 kafka_dispatcher.subscribe(echo)
