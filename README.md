@@ -21,24 +21,39 @@ bash build_caproto_image.sh
 bash start_core_pod.sh
 ```
 
-in one terminal
+## .. manually
 
-##  ...adaptively
-
-```sh
-bash start_adaptive_server.py
-```
-
-and in a second
+Run
 
 ```sh
 bash launch_bluesky.sh
 ```
 
+in a terminal
 
-Running
+
+## ...and watch from the outside
+
+On your host machine run:
+
+```bash
+python kafka_echo_consumer.py
+```
+
+
+##  ...adaptively
+
+Start the adaptive server:
+
+```sh
+bash start_adaptive_server.py
+```
+
+
+Running in the shell should
 
 ```python
+from ohpyd.sim import *
 RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
 ```
 
@@ -56,16 +71,13 @@ should now take 17 runs stepping the motor by 1.5.  The data flow is
 
 ```
 
-Maybe redis should be replaced by kafka
+Maybe redis should be replaced by kafka?
+
+The extra imports are because the motor and det that are set up by 00-base.py do not have
+the keys that the adatptive code is expecting.
 
 
 ## ...queuely
-
-and in a second terminal
-
-```sh
-bash launch_bluesky.sh
-```
 
 and run
 
@@ -80,15 +92,6 @@ http POST localhost:60606/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"
 ```
 
 and watch the scans run!
-
-## ...and watch from the outside
-
-On your host machine run:
-
-```bash
-python kafka_echo_consumer.py
-```
-
 
 The data flow is
 
