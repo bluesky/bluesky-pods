@@ -61,7 +61,7 @@ bash start_adaptive_server.py
 Running in the shell should
 
 ```python
-from ohpyd.sim import *
+from ophyd.sim import *
 RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
 ```
 
