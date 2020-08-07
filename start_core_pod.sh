@@ -2,8 +2,11 @@
 set -e
 set -o xtrace
 
-# create the pod
-podman pod create -n acquisition -p 60606:8081/tcp -p 9092:9092/tcp -p 29092:29092/tcp -p 6977:6669/tcp
+# Main acquisition services with adaptive etc
+# Separate out databroker server, kafka consumer that only use main pod via kafka topic
+
+# create the acquisition pod
+podman pod create -n acquisition -p 60606:8081/tcp -p 9092:9092/tcp -p 29092:29092/tcp
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
@@ -39,4 +42,7 @@ podman run --pod acquisition \
 podman run --pod acquisition -td --rm bluesky python3 -m aiohttp.web -H localhost -P 8081 bluesky_queueserver.server:init_func
 
 # start up databroker server
-podman run --pod acquisition -dt --rm databroker-server uvicorn --port 6669 databroker_server.main:app
+podman pod create -n databroker -p 6977:6669/tcp
+# start up a mongo
+podman run -dt --pod databroker --rm mongo
+podman run --pod databroker -dt --rm databroker-server uvicorn --port 6669 databroker_server.main:app
