@@ -6,6 +6,7 @@ container=$(buildah from bluesky-base)
 buildah run $container -- dnf -y install python3-pycurl
 # install some base python packages from pypi
 buildah run $container -- pip3 install caproto[standard] jupyter httpie ipython
+buildah run $container -- pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
 
 # copy in source and install the current state of your checkout
 targets=( ../event-model ../bluesky ../ophyd ../databroker ../bluesky-adaptive ../bluesky-queueserver ../suitcase-* )
