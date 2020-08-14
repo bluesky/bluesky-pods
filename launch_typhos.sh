@@ -4,7 +4,7 @@ set -o xtrace
 
 xhost +local:docker
 
-podman run --pod adaptive \
+podman run --pod acquisition \
        -ti  --rm \
        -v /tmp/.X11-unix/:/tmp/.X11-unix/ -e DISPLAY \
        -v `pwd`:'/app' -w '/app' \
