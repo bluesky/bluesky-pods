@@ -17,6 +17,7 @@ podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.ra
 podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.simple -v --interfaces=127.0.0.1
 podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.thermo_sim -v --interfaces=127.0.0.1
 podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v --interfaces=127.0.0.1
+
 # start up a mongo
 podman run -dt --pod acquisition --rm mongo
 # stort up redis

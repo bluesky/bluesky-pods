@@ -15,11 +15,15 @@ for a useful guide, paying particular attention to setting up `/etc/subuid` and
 
 ```sh
 # this is fedora + some heavy weight Python
-bash build_bluesky_base_image.sh
+bash image_builders/build_bluesky_base_image.sh
 # installs the rest of our stack on top of the base image
-bash build_bluesky_image.sh
+bash image_builders/build_bluesky_image.sh
 # build an image with caproto installed
-bash build_caproto_image.sh
+bash image_builders/build_caproto_image.sh
+# build an image for the databroker server
+bash image_builders/build_databroker_server_image.sh
+# build an image with pydm / typhos installed
+bash image_builders/build_typhos_image.sh
 ```
 
 ## run the pod
