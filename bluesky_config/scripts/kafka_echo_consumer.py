@@ -22,8 +22,9 @@ kafka_dispatcher = RemoteDispatcher(
 def echo(name, doc):
     ts = doc.get("time", 0)
     print(
-        f"at {datetime.datetime.now().isoformat()} got a {name} document "
-        f"from {datetime.datetime.fromtimestamp(ts)}"
+        f"{datetime.datetime.now().isoformat()}: "
+        f"({datetime.datetime.fromtimestamp(ts)})"
+        f" {name} "
     )
 
 
