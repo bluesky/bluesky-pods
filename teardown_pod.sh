@@ -1,5 +1,5 @@
 #! /usr/bin/bash
-set -e
+
 set -o xtrace
 
 podman pod stop acquisition
