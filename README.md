@@ -26,6 +26,13 @@ bash image_builders/build_databroker_server_image.sh
 bash image_builders/build_typhos_image.sh
 ```
 
+If you are feeling brave (and have the dependancies checked out as peers
+of this directory) build a "snapshot" image via
+
+```sh
+bash image_builders/build_bluesky_snapshot.sh
+```
+
 ## run the pod
 
 ```sh
@@ -41,8 +48,14 @@ Run
 bash launch_bluesky.sh
 ```
 
-in a terminal
+in a terminal or
 
+
+```sh
+bash launch_bluesky.sh bluesky-dev
+```
+
+to get the
 
 ## ...and watch from the outside
 
@@ -58,7 +71,7 @@ python kafka_echo_consumer.py
 Start the adaptive server:
 
 ```sh
-bash start_adaptive_server.py
+bash start_adaptive_server.sh
 ```
 
 
