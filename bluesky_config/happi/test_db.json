@@ -232,5 +232,20 @@
     "device_class": "ophyd.signal.EpicsSignal",
     "name": "beam_current",
     "prefix": "mini:current"
+  },
+  "thermo": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "thermo",
+    "device_class": "localdevs.Thermo",
+    "name": "thermo",
+    "prefix": "thermo:"
   }
 }
