@@ -87,3 +87,28 @@ class Thermo(Eurotherm):
     equilibrium_time = Cpt(Signal, value=5, kind="config")
     timeout = Cpt(Signal, value=500, kind="config")
     tolerance = Cpt(Signal, value=1, kind="config")
+
+
+class RandomWalk(Device):
+    dt = Cpt(EpicsSignal, "dt", kind="config")
+    x = Cpt(EpicsSignal, "x", kind="hinted")
+
+
+class Simple(Device):
+    A = Cpt(EpicsSignal, "A")
+    B = Cpt(EpicsSignal, "B")
+    C = Cpt(EpicsSignal, "C")
+
+
+class TriggeredIOC(Device):
+    gain = Cpt(EpicsSignal, 'gain', kind='config')
+    exposure_time = Cpt(EpicsSignal, 'exposure_time', kind='config')
+    enabled = Cpt(EpicsSignal, 'enabled', kind='config')
+    enabled = Cpt(EpicsSignal, 'enabled', kind='config')
+
+    reading = Cpt(EpicsSignal, 'reading', kind='hinted')
+
+    acquire = Cpt(EpicsSignal, 'reading', kind='omitted', put_complete=True)
+
+    def trigger(self, *args, **kwargs):
+        return self.acquire.set(*args, **kwargs)
