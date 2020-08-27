@@ -15,11 +15,22 @@ for a useful guide, paying particular attention to setting up `/etc/subuid` and
 
 ```sh
 # this is fedora + some heavy weight Python
-bash build_bluesky_base_image.sh
+bash image_builders/build_bluesky_base_image.sh
 # installs the rest of our stack on top of the base image
-bash build_bluesky_image.sh
+bash image_builders/build_bluesky_image.sh
 # build an image with caproto installed
-bash build_caproto_image.sh
+bash image_builders/build_caproto_image.sh
+# build an image for the databroker server
+bash image_builders/build_databroker_server_image.sh
+# build an image with pydm / typhos installed
+bash image_builders/build_typhos_image.sh
+```
+
+If you are feeling brave (and have the dependencies checked out as peers
+of this directory) build a "snapshot" image via
+
+```sh
+bash image_builders/build_bluesky_snapshot.sh
 ```
 
 ## run the pod
@@ -37,8 +48,14 @@ Run
 bash launch_bluesky.sh
 ```
 
-in a terminal
+in a terminal or
 
+
+```sh
+bash launch_bluesky.sh bluesky-dev
+```
+
+to get the
 
 ## ...and watch from the outside
 
@@ -54,7 +71,7 @@ python kafka_echo_consumer.py
 Start the adaptive server:
 
 ```sh
-bash start_adaptive_server.py
+bash start_adaptive_server.sh
 ```
 
 

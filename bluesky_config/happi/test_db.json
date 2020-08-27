@@ -232,5 +232,83 @@
     "device_class": "ophyd.signal.EpicsSignal",
     "name": "beam_current",
     "prefix": "mini:current"
+  },
+  "thermo": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "thermo",
+    "device_class": "localdevs.Thermo",
+    "name": "thermo",
+    "prefix": "thermo:"
+  },
+  "random_walk": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "random_walk",
+    "device_class": "localdevs.RandomWalk",
+    "name": "random_walk",
+    "prefix": "random_walk:"
+  },
+
+  "random_walk_h": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "random_walk_h",
+    "device_class": "localdevs.RandomWalk",
+    "name": "random_walk_h",
+    "prefix": "random_walk:horiz-"
+  },
+
+  "random_walk_v": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "random_walk_v",
+    "device_class": "localdevs.RandomWalk",
+    "name": "random_walk_v",
+    "prefix": "random_walk:vert-"
+  },
+  "triggered_pc": {
+    "active": true,
+    "documentation": null,
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "type": "OphydItem",
+    "_id": "trigger_with_pc",
+    "device_class": "localdevs.RandomWalk",
+    "name": "triggered_pc",
+    "prefix": "trigger_wich_pc"
   }
+
 }

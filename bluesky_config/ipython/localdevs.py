@@ -1,8 +1,11 @@
 """Special use handler for training."""
 import numpy as np
+
 from ophyd import Device, Component as Cpt, Signal, DeviceStatus
 from ophyd.device import Staged
 from ophyd.signal import EpicsSignal, EpicsSignalRO
+
+from nslsii.temperature_controllers import Eurotherm
 
 
 class NewtonDirectSimulator(Device):
@@ -68,3 +71,44 @@ class Spot(Device):
 
     def trigger(self):
         return self.img.trigger()
+
+
+class Thermo(Eurotherm):
+    # override these signals to account for different PV names
+    readback = Cpt(EpicsSignal, "I", kind="hinted")
+    setpoint = Cpt(EpicsSignal, "SP", kind="normal")
+
+    # specific to the sumulator
+    K = Cpt(EpicsSignal, "K", kind="config")
+    omega = Cpt(EpicsSignal, "omega", kind="config")
+    Tvar = Cpt(EpicsSignal, "Tvar", kind="config")
+
+    # override these to set kind correctly, delete when nslsii updated
+    equilibrium_time = Cpt(Signal, value=5, kind="config")
+    timeout = Cpt(Signal, value=500, kind="config")
+    tolerance = Cpt(Signal, value=1, kind="config")
+
+
+class RandomWalk(Device):
+    dt = Cpt(EpicsSignal, "dt", kind="config")
+    x = Cpt(EpicsSignal, "x", kind="hinted")
+
+
+class Simple(Device):
+    A = Cpt(EpicsSignal, "A")
+    B = Cpt(EpicsSignal, "B")
+    C = Cpt(EpicsSignal, "C")
+
+
+class TriggeredIOC(Device):
+    gain = Cpt(EpicsSignal, 'gain', kind='config')
+    exposure_time = Cpt(EpicsSignal, 'exposure_time', kind='config')
+    enabled = Cpt(EpicsSignal, 'enabled', kind='config')
+    enabled = Cpt(EpicsSignal, 'enabled', kind='config')
+
+    reading = Cpt(EpicsSignal, 'reading', kind='hinted')
+
+    acquire = Cpt(EpicsSignal, 'reading', kind='omitted', put_complete=True)
+
+    def trigger(self, *args, **kwargs):
+        return self.acquire.set(*args, **kwargs)

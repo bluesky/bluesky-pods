@@ -10,13 +10,14 @@ podman pod create -n acquisition -p 60606:8081/tcp -p 9092:9092/tcp -p 29092:290
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.mini_beamline -v --interfaces=127.0.0.1
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v --interfaces=127.0.0.1
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v --interfaces=127.0.0.1 --prefix="random_walk:horiz-"
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v --interfaces=127.0.0.1 --prefix="random_walk:vert-"
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.simple -v --interfaces=127.0.0.1
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.thermo_sim -v --interfaces=127.0.0.1
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v --interfaces=127.0.0.1
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.mini_beamline -v
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.simple -v
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.thermo_sim -v
+podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v
+
 # start up a mongo
 podman run -dt --pod acquisition --rm mongo
 # stort up redis
