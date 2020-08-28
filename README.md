@@ -113,7 +113,7 @@ RE(queue_server_plan())
 On your host machine run:
 
 ```bash
-http POST localhost:60606/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"], "motor_ph", -10, 10, 25]}'
+http POST localhost:60607/qs/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"], "motor_ph", -10, 10, 25]}'
 ```
 
 and watch the scans run!
