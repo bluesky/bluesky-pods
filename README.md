@@ -7,7 +7,8 @@ can run a Bluesky session and an out-of-core adaptive plan
 
 Podman and buildah are packaged on many Linux distributions. Refer to
 [the official installation guide](https://podman.io/getting-started/installation)
-for specific instructions.
+for specific instructions. These instructions cover how to install `podman`.
+Also install `buildah` in exactly the same fashion.
 
 ## Enable "rootless" usage
 
