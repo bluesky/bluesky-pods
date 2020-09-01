@@ -75,9 +75,9 @@ to get the [what?]
 On your host machine run:
 
 ```bash
-python kafka_echo_consumer.py
+pip install -r bluesky_config/scripts/requirements.txt
+python bluesky_config/scripts/kafka_echo_consumer.py
 ```
-
 
 ##  ...adaptively
 
