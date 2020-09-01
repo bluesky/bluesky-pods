@@ -111,7 +111,7 @@ RE(queue_server_plan())
 ```
 
 On your host machine post to that end point (via
-(httpie)[<https://httpie.org/] in this example):
+[httpie](https://httpie.org/) in this example):
 
 ```bash
 http POST localhost:60607/qs/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"], "motor_ph", -10, 10, 25]}'
