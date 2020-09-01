@@ -68,7 +68,7 @@ in a terminal or
 bash launch_bluesky.sh bluesky-dev
 ```
 
-to get the
+to get the [what?]
 
 ## ...and watch from the outside
 
