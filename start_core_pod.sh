@@ -6,7 +6,7 @@ set -o xtrace
 # Separate out databroker server, kafka consumer that only use main pod via kafka topic
 
 # create the acquisition pod
-podman pod create -n acquisition -p 60606:8081/tcp -p 9092:9092/tcp -p 29092:29092/tcp
+podman pod create -n acquisition  -p 9092:9092/tcp -p 29092:29092/tcp -p 60607:9090/tcp
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
@@ -39,8 +39,20 @@ podman run --pod acquisition \
        -v /bitnami \
        bitnami/kafka:2
 
+
+
+
 # start up queueserver
 podman run --pod acquisition -td --rm bluesky python3 -m aiohttp.web -H localhost -P 8081 bluesky_queueserver.server:init_func
+
+
+# start nginx
+podman run --pod acquisition \
+       -v ./bluesky_config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+       -v ./bluesky_config/static_web:/var/www/html:ro \
+       -d --rm \
+       nginx
+
 
 # start up databroker server
 podman pod create -n databroker -p 6977:6669/tcp
