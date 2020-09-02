@@ -69,7 +69,7 @@ in a terminal or
 bash launch_bluesky.sh bluesky-dev
 ```
 
-to get the [what?]
+to get the snapshot version.
 
 ## ...and watch from the outside
 
