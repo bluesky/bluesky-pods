@@ -2,7 +2,16 @@
 set -e
 set -o xtrace
 
-xhost +local:docker
+# See this for xauth stuff.
+# https://stackoverflow.com/a/48235281/1221924
+
+# Unlike the recommendation in the linked SO post,
+# we are not using docker and thus not using docker's special network.
+# Instead, we use the IP of the host.
+IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+DISPLAY=`echo $DISPLAY | sed "s/^[^:]*\(.*\)/${IP_ADDR}\1/"`
+XAUTH=/tmp/.docker.xauth
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
 if [ "$1" != "" ]; then
     imagename=$1
@@ -13,6 +22,8 @@ fi
 podman run --pod acquisition \
        -ti  --rm \
        -v /tmp/.X11-unix/:/tmp/.X11-unix/ -e DISPLAY \
+       -v $XAUTH:$XAUTH \
+       -e XAUTHORITY=$XAUTH \
        -v `pwd`:'/app' -w '/app' \
        -v ./bluesky_config/ipython:/usr/local/share/ipython \
        -v ./bluesky_config/databroker:/usr/local/share/intake \
