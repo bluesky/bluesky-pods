@@ -29,5 +29,7 @@ podman run --pod acquisition \
        -v ./bluesky_config/databroker:/usr/local/share/intake \
        -v ./bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
+       -e EPICS_CA_ADDR_LIST=10.0.2.255 \
+       -e EPICS_CA_AUTO_ADDR_LIST=no \
        $imagename \
        ipython3 --ipython-dir=/usr/local/share/ipython
