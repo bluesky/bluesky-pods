@@ -25,6 +25,22 @@ podman system migrate
 For additional details and troubleshooting, see
 [the rootless tutorial](https://github.com/containers/podman/blob/master/docs/tutorials/rootless_tutorial.md).
 
+## Configure for display over SSH
+
+If the machine where you will be running podman is one you are connected to via
+SSH, then you will need to configure the SSH daemon to accept connections routed
+through podman---specifically, connections to its IP address rather than
+`localhost`.
+
+Add this line to `/etc/ssh/sshd_config`.
+
+```
+X11UseLocalhost no
+```
+
+If podman is running on the machine you are sitting in front of, no action is
+required.
+
 ## Build the containers
 
 ```sh
