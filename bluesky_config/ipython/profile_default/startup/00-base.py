@@ -12,7 +12,7 @@ import msgpack_numpy as mpn
 from bluesky import RunEngine
 import bluesky.plans as bp
 
-
+from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.zmq import Publisher as zmqPublisher
 from bluesky_kafka import Publisher as kafkaPublisher
 
@@ -53,6 +53,11 @@ logger.addHandler(handler)
 
 RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
+try:
+    bec = BestEffortCallback()
+    RE.subscribe(bec)
+except Exception:
+    pass
 
 to_brains = kafkaPublisher(
     topic="adaptive",
