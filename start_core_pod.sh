@@ -59,3 +59,4 @@ podman pod create -n databroker -p 6977:6669/tcp
 # start up a mongo
 podman run -dt --pod databroker --rm mongo
 podman run --pod databroker -dt --rm databroker-server uvicorn --port 6669 databroker_server.main:app
+podman run --pod databroker -ti -v `pwd`/bluesky_config/scripts:'/app' -w '/app' bluesky python3 mongo_consumer.py
