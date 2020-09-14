@@ -51,7 +51,6 @@ handler = logging.StreamHandler()
 handler.setLevel("DEBUG")
 logger.addHandler(handler)
 
-#RE.subscribe(db.v1.insert)
 RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 
