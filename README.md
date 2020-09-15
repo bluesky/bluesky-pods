@@ -81,8 +81,21 @@ bash image_builders/build_bluesky_snapshot.sh
 ## run the pod
 
 ```sh
-# this sarts up caproto, mongo, zmqproxy, and redis
-bash start_core_pod.sh
+# This starts:
+#  Acquisition pod:
+#     several caproto servers / synthetic IOCs
+#     kafka (and published to edge)
+#     zmq
+#     mongo
+#     redis
+#     nginx (to proxy non-kafka services out)
+#  Databroker pod:
+#     kafka -> mongo client (looking at the Acqusition pod)
+#     mongo
+#     databroker server
+#     nginx (to proxy services out)
+# and mongo, kafka->mongo client, and the databroker server in the databroker pod
+bash start_core_pods.sh
 ```
 
 ## Launch bsui (bluesky ipython terminal)
