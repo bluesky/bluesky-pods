@@ -6,8 +6,8 @@ import msgpack_numpy as mpn
 
 from bluesky_kafka import MongoConsumer
 
-mongo_uri="mongodb://localhost:27017"
-bootstrap_servers="127.0.0.1:9092"
+mongo_uri = "mongodb://localhost:27017"
+bootstrap_servers = "127.0.0.1:9092"
 
 kafka_deserializer = partial(msgpack.loads, object_hook=mpn.decode)
 auto_offset_reset = "latest"
