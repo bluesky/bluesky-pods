@@ -85,13 +85,12 @@ bash image_builders/build_bluesky_snapshot.sh
 #  Acquisition pod:
 #     several caproto servers / synthetic IOCs
 #     kafka (and published to edge)
-#     zmq
-#     mongo
-#     redis
-#     nginx (to proxy non-kafka services out)
+#     zmq, mongo, redis (for internal use only)
+#     queueserver
+#     nginx (to proxy queueserver + static hosting)
 #  Databroker pod:
 #     kafka -> mongo client (looking at the Acqusition pod)
-#     mongo
+#     mongo (not exposed outside)
 #     databroker server
 #     nginx (to proxy services out)
 # and mongo, kafka->mongo client, and the databroker server in the databroker pod

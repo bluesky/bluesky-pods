@@ -57,7 +57,7 @@ podman run --pod acquisition -td --rm bluesky python3 -m aiohttp.web -H localhos
 
 # start nginx
 podman run --pod acquisition \
-       -v ./bluesky_config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
-       -v ./bluesky_config/static_web:/var/www/html:ro \
+       -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
+       -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
        -d --rm \
        nginx
