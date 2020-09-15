@@ -2,6 +2,7 @@
 set -e
 set -o xtrace
 
+########################################################################################################################
 # Main acquisition services with adaptive etc
 # Separate out databroker server, kafka consumer that only use main pod via kafka topic
 
@@ -20,14 +21,14 @@ podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.tr
 
 # start up a mongo
 podman run -dt --pod acquisition --rm mongo
-# stort up redis
-podman run -dt --pod acquisition  --rm redis
 # start up a zmq proxy
 podman run --pod acquisition -dt --rm  bluesky bluesky-0MQ-proxy 4567 5678
-
-# set up kafka
-podman run --pod acquisition -dt -e ALLOW_ANONYMOUS_LOGIN=yes -v /bitnami  --rm bitnami/zookeeper:3
-
+# set up kafka + zookeeper
+podman run --pod acquisition \
+       -dt --rm \
+       -e ALLOW_ANONYMOUS_LOGIN=yes \
+       -v /bitnami \
+       bitnami/zookeeper:3
 podman run --pod acquisition \
        -dt --rm \
        -e KAFKA_CFG_ZOOKEEPER_CONNECT=localhost:2181   \
@@ -39,12 +40,20 @@ podman run --pod acquisition \
        -v /bitnami \
        bitnami/kafka:2
 
+# set up insert into mongo via kafka
+podman run --pod acquisition\
+       -dt --rm \
+       -v `pwd`/bluesky_config/scripts:'/app' \
+       -w '/app' \
+       bluesky \
+       python3 mongo_consumer.py
 
+# start up redis
+podman run -dt --pod acquisition  --rm redis
 
 
 # start up queueserver
 podman run --pod acquisition -td --rm bluesky python3 -m aiohttp.web -H localhost -P 8081 bluesky_queueserver.server:init_func
-
 
 # start nginx
 podman run --pod acquisition \
@@ -53,10 +62,18 @@ podman run --pod acquisition \
        -d --rm \
        nginx
 
-
-# start up databroker server
+########################################################################################################################
+# Dataaccess pod.
 podman pod create -n databroker -p 6977:6669/tcp
 # start up a mongo
 podman run -dt --pod databroker --rm mongo
+# listen to kafka published from the other pod
+podman run --pod databroker \
+       -dt --rm \
+       -v `pwd`/bluesky_config/scripts:'/app' \
+       -w '/app' \
+       bluesky \
+       python3 mongo_consumer.py
+
+# start the databroker server
 podman run -dt --pod databroker --rm databroker-server uvicorn --port 6669 databroker_server.main:app
-podman run -dt --pod databroker --rm -ti -v `pwd`/bluesky_config/scripts:'/app' -w '/app' bluesky python3 mongo_consumer.py
