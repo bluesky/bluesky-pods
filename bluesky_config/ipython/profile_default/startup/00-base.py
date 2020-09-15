@@ -12,9 +12,7 @@ import msgpack_numpy as mpn
 from bluesky import RunEngine
 import bluesky.plans as bp
 
-
 from bluesky.callbacks.best_effort import BestEffortCallback
-
 from bluesky.callbacks.zmq import Publisher as zmqPublisher
 from bluesky_kafka import Publisher as kafkaPublisher
 
@@ -32,6 +30,7 @@ hclient = happi.Client(path='/usr/local/share/happi/test_db.json')
 db = databroker.catalog['MAD']
 
 RE = RunEngine()
+bec = BestEffortCallback()
 
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
@@ -47,15 +46,12 @@ kafka_publisher = kafkaPublisher(
     serializer=partial(msgpack.dumps, default=mpn.encode),
 )
 
-bec = BestEffortCallback()
-
 logger = logging.getLogger("databroker")
 logger.setLevel("DEBUG")
 handler = logging.StreamHandler()
 handler.setLevel("DEBUG")
 logger.addHandler(handler)
 
-RE.subscribe(db.v1.insert)
 RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 RE.subscribe(bec)
