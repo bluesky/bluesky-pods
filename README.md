@@ -38,8 +38,8 @@ Add this line to `/etc/ssh/sshd_config`.
 X11UseLocalhost no
 ```
 
-If podman is running on the machine you are sitting in front of, no action is
-required.
+If podman is running on the machine you are sitting in front of, or if you would like 
+to run in "headless" mode, no action is required.
 
 ## Build the containers
 
@@ -70,7 +70,7 @@ bash image_builders/build_bluesky_snapshot.sh
 bash start_core_pod.sh
 ```
 
-## .. manually
+## Launch bsui (bluesky ipython terminal)
 
 Run
 
@@ -87,6 +87,14 @@ bash launch_bluesky.sh bluesky-dev
 
 to get the snapshot version.
 
+or
+
+```sh
+bash launch_bluesky_headless.sh
+```
+
+for the version that does not require any graphics.
+
 ## ...and watch from the outside
 
 On your host machine run:
@@ -96,7 +104,7 @@ pip install -r bluesky_config/scripts/requirements.txt
 python bluesky_config/scripts/kafka_echo_consumer.py
 ```
 
-##  ...adaptively
+##  Try an adaptive scan.
 
 Start the adaptive server:
 
@@ -105,7 +113,7 @@ bash start_adaptive_server.sh
 ```
 
 
-Running in the shell should
+In the bsui terminal:
 
 ```python
 from ophyd.sim import *
@@ -116,14 +124,19 @@ should now take 17 runs stepping the motor by 1.5.  The data flow is
 
 ```
   | ---> kafka to the edge  --- /exposed ports on edge/ --> external consumers
-  | ---> mongo
   | ---> live table
   |
   ^
   RE ---- kafka broker -----> adaptive_server
-  ^                                  |
+  ^            | ------> mongo       |
   | < -------- redis --------<-----< |
 
+```
+
+To view the results saved in mongo:
+
+```python
+db[-1]
 ```
 
 Maybe redis should be replaced by kafka?
@@ -153,7 +166,7 @@ The data flow is
 
 ```
   | ---> kafka to the edge ----------- /exposed ports on edge/ ---> external consumers
-  | ---> mongo                                                                 |
+  | ---> kafka ---> mongo                                                      |
   | ---> live table                                                            |
   ^                                                                            ↓
   RE < --- http --- queueserver < ---- / http from edge / <-------- http POST {json}
