@@ -3,6 +3,21 @@
 This is a set of buildah and podman scripts that will stand up a pod that
 can run a Bluesky session and an out-of-core adaptive plan
 
+### Terms
+
+- **image** : The binary blob that can be run as a container
+- **container** : A running image.  You can have many containers
+  running the same image simultaneously.  As part of starting the
+  container you can pass in environmental variables and mount directories from
+  the host into the container (read-only or read/write)
+- **pod** : A collection of running containers that share a conceptual
+  local network.  When the pod is created you can control which ports
+  are visible to the host machine.  Internal to the pod ``localhost``
+  can be used to access a container's peers and the IP address of the
+  host to access exposed services from other pods.
+
+
+
 ## Get podman
 
 Podman and buildah are packaged on many Linux distributions. Refer to
@@ -41,7 +56,7 @@ X11UseLocalhost no
 If podman is running on the machine you are sitting in front of, or if you would like
 to run in "headless" mode, no action is required.
 
-## Build the containers
+## Build the images
 
 ```sh
 # this is fedora + some heavy weight Python
