@@ -30,6 +30,7 @@ hclient = happi.Client(path='/usr/local/share/happi/test_db.json')
 db = databroker.catalog['MAD']
 
 RE = RunEngine()
+bec = BestEffortCallback()
 
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
@@ -53,11 +54,7 @@ logger.addHandler(handler)
 
 RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
-try:
-    bec = BestEffortCallback()
-    RE.subscribe(bec)
-except Exception:
-    pass
+RE.subscribe(bec)
 
 to_brains = kafkaPublisher(
     topic="adaptive",
