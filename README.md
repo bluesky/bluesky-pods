@@ -38,7 +38,7 @@ Add this line to `/etc/ssh/sshd_config`.
 X11UseLocalhost no
 ```
 
-If podman is running on the machine you are sitting in front of, or if you would like 
+If podman is running on the machine you are sitting in front of, or if you would like
 to run in "headless" mode, no action is required.
 
 ## Build the containers
@@ -109,7 +109,7 @@ python bluesky_config/scripts/kafka_echo_consumer.py
 Start the adaptive server:
 
 ```sh
-bash start_adaptive_server.sh
+bash launchers/start_adaptive_server.sh
 ```
 
 
