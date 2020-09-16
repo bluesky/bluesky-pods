@@ -18,8 +18,6 @@ from bluesky_kafka import Publisher as kafkaPublisher
 
 from bluesky_adaptive.per_start import adaptive_plan
 
-from bluesky_queueserver.plan import configure_plan
-
 import databroker
 import happi
 import happi.loader
@@ -97,11 +95,6 @@ from_recommender = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=
 
 
 devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
-queue_server_plan = configure_plan(
-    devs,
-    {"count": bp.count, "scan": bp.scan},
-    "http://0.0.0.0:8081",
-)
 
 ip.user_ns.update(devs)
 
