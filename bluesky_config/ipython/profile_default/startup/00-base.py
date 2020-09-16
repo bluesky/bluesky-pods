@@ -56,7 +56,7 @@ RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 RE.subscribe(bec)
 
-to_brains = kafkaPublisher(
+to_recommender = kafkaPublisher(
     topic="adaptive",
     bootstrap_servers="127.0.0.1:9092",
     key="kafka-unit-test-key",
@@ -91,9 +91,9 @@ class RedisQueue:
                 raise Empty
 
 
-from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
+from_recommender = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
 # you may have to run this twice to "prime the topics" the first time you run it
-# RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
+# RE(adaptive_plan([det], {motor: 0}, to_recommender=to_recommender, from_recommender=from_recommender))
 
 
 devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
