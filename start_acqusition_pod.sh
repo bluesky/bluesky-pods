@@ -55,15 +55,15 @@ podman run -dt --pod acquisition  --rm redis
 # start up queueserver manager
 podman run --pod acquisition \
        -td --rm \
-       bluesky-dev \
        --name=acq_queue_manager \
-       start-re-manager
+       bluesky-dev \
+       start-re-manager --kafka_topic=mad.bluesky.documents
 
 # start up queueserver webserver
 podman run --pod acquisition \
        -td --rm \
-       bluesky \
        --name=acq_queue_server \
+       bluesky \
        python3 -m aiohttp.web -H 0.0.0.0 -P 8081 bluesky_queueserver.server.server:init_func
 
 # start nginx
