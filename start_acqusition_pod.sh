@@ -45,15 +45,26 @@ podman run --pod acquisition\
        -dt --rm \
        -v `pwd`/bluesky_config/scripts:'/app' \
        -w '/app' \
+       --name=acq_mongo_consumer \
        bluesky \
        python3 mongo_consumer.py
 
 # start up redis
 podman run -dt --pod acquisition  --rm redis
 
+# start up queueserver manager
+podman run --pod acquisition \
+       -td --rm \
+       bluesky-dev \
+       --name=acq_queue_manager \
+       start-re-manager
 
-# start up queueserver
-podman run --pod acquisition -td --rm bluesky python3 -m aiohttp.web -H localhost -P 8081 bluesky_queueserver.server:init_func
+# start up queueserver webserver
+podman run --pod acquisition \
+       -td --rm \
+       bluesky \
+       --name=acq_queue_server \
+       python3 -m aiohttp.web -H 0.0.0.0 -P 8081 bluesky_queueserver.server.server:init_func
 
 # start nginx
 podman run --pod acquisition \
