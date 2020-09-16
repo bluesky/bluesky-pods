@@ -33,7 +33,7 @@ bec = BestEffortCallback()
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
     topic="mad.bluesky.documents",
-    bootstrap_servers="127.0.0.1:9092",
+    bootstrap_servers="127.0.0.1:29092",
     key="kafka-unit-test-key",
     # work with a single broker
     producer_config={
