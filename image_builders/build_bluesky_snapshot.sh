@@ -2,9 +2,12 @@
 set -e
 set -o xtrace
 
+mkdir -p image_builders/pip_cache
+
 container=$(buildah from bluesky-base)
 # install some base python packages from pypi
-buildah run $container -- pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
+buildah run $container -- dnf -y install  python3-pycurl
+buildah run -v `pwd`/image_builders/pip_cache:/root/.cache/pip  $container -- pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
 
 # copy in source and install the current state of your checkout
 targets=( ../event-model ../bluesky ../ophyd ../databroker ../bluesky-adaptive ../bluesky-queueserver ../suitcase-* ../bluesky-kafka)
@@ -14,16 +17,16 @@ for t in ${targets[@]}; do
         # move the source into the container
         buildah copy $container ../$t /src/$t;
         # run the install
-        buildah run $container -- pip3 install /src/$t
+        buildah run -v `pwd`/image_builders/pip_cache:/root/.cache/pip  $container -- pip3 install /src/$t
         # nuke the source to save space?
-        buildah run $container -- rm -rf /src/$t
+        buildah run -v `pwd`/image_builders/pip_cache:/root/.cache/pip  $container -- rm -rf /src/$t
     fi
 done
 
 # install everything else ;)
-buildah run $container -- pip3 install nslsii
+buildah run -v `pwd`/image_builders/pip_cache:/root/.cache/pip  $container -- pip3 install nslsii
 
-buildah run $container -- pip3 uninstall --yes pyepics
+buildah run -v `pwd`/image_builders/pip_cache:/root/.cache/pip  $container -- pip3 uninstall --yes pyepics
 
 buildah unmount $container
 buildah commit $container bluesky-dev

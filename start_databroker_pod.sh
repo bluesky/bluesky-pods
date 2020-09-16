@@ -2,6 +2,7 @@
 set -e
 set -o xtrace
 
+IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
 
 ########################################################################################################################
 # Dataaccess pod.
@@ -13,11 +14,16 @@ podman run --pod databroker \
        -dt --rm \
        -v `pwd`/bluesky_config/scripts:'/app' \
        -w '/app' \
+       --name=db_mongo_consumer \
        bluesky \
-       python3 mongo_consumer.py
+       python3 mongo_consumer.py --kafka_server=$IP_ADDR:9092
 
 # start the databroker server
-podman run -dt --pod databroker --rm databroker-server uvicorn --port 8081 databroker_server.main:app
+podman run --pod databroker \
+       --rm -dt \
+       --name=db_server \
+       databroker-server \
+       uvicorn --port 8081 databroker_server.main:app
 
 
 # start nginx

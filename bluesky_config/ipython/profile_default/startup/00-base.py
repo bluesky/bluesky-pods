@@ -18,8 +18,6 @@ from bluesky_kafka import Publisher as kafkaPublisher
 
 from bluesky_adaptive.per_start import adaptive_plan
 
-from bluesky_queueserver.plan import configure_plan
-
 import databroker
 import happi
 import happi.loader
@@ -35,7 +33,7 @@ bec = BestEffortCallback()
 zmq_publisher = zmqPublisher("127.0.0.1:4567")
 kafka_publisher = kafkaPublisher(
     topic="mad.bluesky.documents",
-    bootstrap_servers="127.0.0.1:9092",
+    bootstrap_servers="127.0.0.1:29092",
     key="kafka-unit-test-key",
     # work with a single broker
     producer_config={
@@ -56,7 +54,7 @@ RE.subscribe(zmq_publisher)
 RE.subscribe(kafka_publisher)
 RE.subscribe(bec)
 
-to_brains = kafkaPublisher(
+to_recommender = kafkaPublisher(
     topic="adaptive",
     bootstrap_servers="127.0.0.1:9092",
     key="kafka-unit-test-key",
@@ -91,17 +89,12 @@ class RedisQueue:
                 raise Empty
 
 
-from_brains = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
+from_recommender = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=0))
 # you may have to run this twice to "prime the topics" the first time you run it
-# RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
+# RE(adaptive_plan([det], {motor: 0}, to_recommender=to_recommender, from_recommender=from_recommender))
 
 
 devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
-queue_server_plan = configure_plan(
-    devs,
-    {"count": bp.count, "scan": bp.scan},
-    "http://0.0.0.0:8081",
-)
 
 ip.user_ns.update(devs)
 
