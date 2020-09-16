@@ -79,3 +79,5 @@ podman run --pod acquisition \
        -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
        -d --rm \
        nginx
+
+bash start_ad.sh MADSIM1
