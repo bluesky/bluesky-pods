@@ -189,11 +189,12 @@ how to run the queueserver
 The data flow is
 
 ```
-  | ---> kafka to the edge ----------- /exposed ports on edge/ ---> external consumers
-  | ---> kafka ---> mongo                                                      |
+  | ---> kafka to the edge --------- /exposed ports on edge/ ---> external consumers
+  |       | ---> internal mongo                                                |
+  |                                                                            |
   | ---> live table                                                            |
   ^                                                                            ↓
-  RE < --- http --- queueserver < ---- / http from edge / <-------- http POST {json}
+  RE < --- http --- queueserver < --- / http from edge / <-------- http POST {json}
 
 
 ```
