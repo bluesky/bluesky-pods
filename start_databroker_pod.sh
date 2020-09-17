@@ -22,6 +22,7 @@ podman run --pod databroker \
 podman run --pod databroker \
        --rm -dt \
        --name=db_server \
+       -v ./bluesky_config/databroker:/usr/local/share/intake \
        databroker-server \
        uvicorn --port 8081 databroker_server.main:app
 

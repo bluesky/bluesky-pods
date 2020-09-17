@@ -145,7 +145,7 @@ In the bsui terminal:
 
 ```python
 from ophyd.sim import *
-RE(adaptive_plan([det], {motor: 0}, to_recomender=to_recomender, from_recomender=from_recomender))
+RE(adaptive_plan([det], {motor: 0}, to_recommender=to_recommender, from_recommender=from_recommender))
 ```
 
 should now take 17 runs stepping the motor by 1.5.  The data flow is
@@ -189,11 +189,12 @@ how to run the queueserver
 The data flow is
 
 ```
-  | ---> kafka to the edge ----------- /exposed ports on edge/ ---> external consumers
-  | ---> kafka ---> mongo                                                      |
+  | ---> kafka to the edge --------- /exposed ports on edge/ ---> external consumers
+  |       | ---> internal mongo                                                |
+  |                                                                            |
   | ---> live table                                                            |
   ^                                                                            ↓
-  RE < --- http --- queueserver < ---- / http from edge / <-------- http POST {json}
+  RE < --- http --- queueserver < --- / http from edge / <-------- http POST {json}
 
 
 ```

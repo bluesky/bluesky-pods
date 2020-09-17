@@ -38,6 +38,7 @@ podman run --pod acquisition \
 # https://github.com/rmoff/kafka-listeners
 podman run --pod acquisition \
        -dt --rm \
+       --name=acq_kafka \
        -e KAFKA_CFG_ZOOKEEPER_CONNECT=localhost:2181   \
        -e ALLOW_PLAINTEXT_LISTENER=yes \
        -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT \
@@ -46,6 +47,11 @@ podman run --pod acquisition \
        -e KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true \
        -v /bitnami \
        bitnami/kafka:2
+# make sure kafka is alive
+sleep 2
+# create the topic we are going to publish to
+podman exec acq_kafka kafka-topics.sh --create --topic mad.bluesky.documents --bootstrap-server localhost:29092
+
 
 # set up insert into mongo via kafka
 podman run --pod acquisition\
@@ -54,7 +60,8 @@ podman run --pod acquisition\
        -w '/app' \
        --name=acq_mongo_consumer \
        bluesky \
-       python3 mongo_consumer.py  --kafka_server=localhost:29092
+       python3 mongo_consumer.py  \
+           --kafka_server=localhost:29092 --kafka_group=acq_local_consumers
 
 # start up redis
 podman run -dt --pod acquisition  --rm redis
