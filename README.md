@@ -145,7 +145,7 @@ In the bsui terminal:
 
 ```python
 from ophyd.sim import *
-RE(adaptive_plan([det], {motor: 0}, to_recomender=to_recomender, from_recomender=from_recomender))
+RE(adaptive_plan([det], {motor: 0}, to_recommender=to_recommender, from_recommender=from_recommender))
 ```
 
 should now take 17 runs stepping the motor by 1.5.  The data flow is
