@@ -6,7 +6,7 @@ IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*
 
 ########################################################################################################################
 # Dataaccess pod.
-podman pod create -n databroker -p 6977:9090/tcp
+podman pod create -n databroker -p 6942:9090/tcp
 # start up a mongo
 podman run -dt --pod databroker --rm mongo
 # listen to kafka published from the other pod

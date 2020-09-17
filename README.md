@@ -1,7 +1,8 @@
 # Pods for bluesky(-adaptive)
 
-This is a set of buildah and podman scripts that will stand up a pod that
-can run a Bluesky session and an out-of-core adaptive plan
+This is a set of buildah and podman scripts that will stand up set of
+pods that attempt to mimic the full beamline / remote compute model
+(as we want to run at NSLS-II).
 
 ### Terms
 
@@ -144,7 +145,7 @@ In the bsui terminal:
 
 ```python
 from ophyd.sim import *
-RE(adaptive_plan([det], {motor: 0}, to_brains=to_brains, from_brains=from_brains))
+RE(adaptive_plan([det], {motor: 0}, to_recomender=to_recomender, from_recomender=from_recomender))
 ```
 
 should now take 17 runs stepping the motor by 1.5.  The data flow is
@@ -174,20 +175,16 @@ the keys that the adatptive code is expecting.
 
 ## ...queuely
 
-and run
-
-```python
-RE(queue_server_plan())
-```
-
-On your host machine post to that end point (via
-[httpie](https://httpie.org/) in this example):
-
 ```bash
+http POST 0.0.0.0:60607/qs/create_environment
 http POST localhost:60607/qs/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"], "motor_ph", -10, 10, 25]}'
+http POST 0.0.0.0:60607/qs/process_queue
 ```
 
 and watch the scans run!
+
+See https://github.com/bluesky/bluesky-queueserver#features for more details of
+how to run the queueserver
 
 The data flow is
 

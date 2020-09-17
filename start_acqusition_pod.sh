@@ -63,7 +63,7 @@ podman run -dt --pod acquisition  --rm redis
 podman run --pod acquisition \
        -td --rm \
        --name=acq_queue_manager \
-       bluesky-dev \
+       bluesky \
        start-re-manager --kafka_topic=mad.bluesky.documents --kafka_server=localhost:29092
 
 # start up queueserver webserver

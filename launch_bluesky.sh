@@ -24,7 +24,8 @@ fi
 
 podman run --pod acquisition \
        -ti  --rm \
-       -v /tmp/.X11-unix/:/tmp/.X11-unix/ -e DISPLAY \
+       -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
+       -e DISPLAY \
        -v $XAUTH:$XAUTH \
        -e XAUTHORITY=$XAUTH \
        -v `pwd`:'/app' -w '/app' \
