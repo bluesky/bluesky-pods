@@ -17,6 +17,10 @@ parser.add_argument(
     default="127.0.0.1:9092"
 )
 parser.add_argument(
+    "--kafka_group", type=str, help="bootstrap server to connect to.",
+    default="mongo-consumers"
+)
+parser.add_argument(
     "--mongo_uri", type=str, help="bootstrap server to connect to.",
     default="mongodb://localhost:27017"
 )
@@ -36,7 +40,7 @@ topics = ["^.*bluesky.documents"]
 settings = dict(
     topics=topics,
     bootstrap_servers=bootstrap_servers,
-    group_id="mongo-consumers",
+    group_id=args.kafka_group,
     mongo_uri=mongo_uri,
     consumer_config={"auto.offset.reset": auto_offset_reset},
     polling_duration=1.0,

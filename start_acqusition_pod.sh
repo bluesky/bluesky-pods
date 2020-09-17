@@ -54,7 +54,8 @@ podman run --pod acquisition\
        -w '/app' \
        --name=acq_mongo_consumer \
        bluesky \
-       python3 mongo_consumer.py  --kafka_server=localhost:29092
+       python3 mongo_consumer.py  \
+           --kafka_server=localhost:29092 --kafka_group=acq_local_consumers
 
 # start up redis
 podman run -dt --pod acquisition  --rm redis
