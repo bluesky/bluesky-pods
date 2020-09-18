@@ -177,7 +177,7 @@ the keys that the adatptive code is expecting.
 
 ```bash
 http POST 0.0.0.0:60607/qs/create_environment
-http POST localhost:60607/qs/add_to_queue 'plan:={"plan":"scan", "args":[["pinhole"], "motor_ph", -10, 10, 25]}'
+http POST 0.0.0.0:60607/qs/add_to_queue plan:='{"name":"count", "args":[["det1", "det2"]], "kwargs":{"num":10, "delay":1}}'
 http POST 0.0.0.0:60607/qs/process_queue
 ```
 
