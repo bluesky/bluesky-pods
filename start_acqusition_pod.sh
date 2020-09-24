@@ -25,6 +25,22 @@ podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.tr
 podman run -dt --pod acquisition --rm mongo
 # start up a zmq proxy
 podman run --pod acquisition -dt --rm  bluesky bluesky-0MQ-proxy 4567 5678
+
+# start elasticsearch
+podman run --pod acquisition \
+       -dt --rm \
+       --name=acq_elasticsearch \
+       -v /bitnami \
+       bitnami/elasticsearch
+
+# start kibana
+podman run --pod acquisition \
+       -dt --rm \
+       --name=acq_kibana \
+       -e KIBANA_ELASTICSEARCH_URL=elasticsearch \
+       -v /bitnami \
+       bitnami/kibana
+
 # set up kafka + zookeeper
 podman run --pod acquisition \
        -dt --rm \
