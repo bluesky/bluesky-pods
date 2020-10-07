@@ -84,6 +84,7 @@ podman run --pod acquisition \
 podman run --pod acquisition \
        -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
        -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
+       --name=acq_reverse_proxy \
        -d --rm \
        nginx
 
