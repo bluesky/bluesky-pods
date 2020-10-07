@@ -176,9 +176,9 @@ the keys that the adatptive code is expecting.
 ## ...queuely
 
 ```bash
-http POST 0.0.0.0:60607/qs/create_environment
-http POST 0.0.0.0:60607/qs/add_to_queue plan:='{"name":"count", "args":[["det1", "det2"]], "kwargs":{"num":10, "delay":1}}'
-http POST 0.0.0.0:60607/qs/process_queue
+http POST 0.0.0.0:60610/qs/create_environment
+http POST 0.0.0.0:60610/qs/add_to_queue plan:='{"name":"count", "args":[["det1", "det2"]], "kwargs":{"num":10, "delay":1}}'
+http POST 0.0.0.0:60610/qs/process_queue
 ```
 
 and watch the scans run!

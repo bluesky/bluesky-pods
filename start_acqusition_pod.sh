@@ -9,7 +9,7 @@ IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*
 # Separate out databroker server, kafka consumer that only use main pod via kafka topic
 
 # create the acquisition pod
-podman pod create -n acquisition  -p 9092:9092/tcp -p 60607:9090/tcp
+podman pod create -n acquisition  -p 9092:9092/tcp -p 60610:9090/tcp
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
