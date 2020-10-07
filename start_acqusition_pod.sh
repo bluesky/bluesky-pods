@@ -78,7 +78,8 @@ podman run --pod acquisition \
        -td --rm \
        --name=acq_queue_server \
        bluesky \
-       python3 -m aiohttp.web -H 0.0.0.0 -P 8081 bluesky_queueserver.server.server:init_func
+       uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
+
 
 # start nginx
 podman run --pod acquisition \
