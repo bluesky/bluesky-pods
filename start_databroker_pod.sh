@@ -30,6 +30,10 @@ HTTP_DIR=../databroker-client/build
 
 if [ ! -d $HTTP_DIR ]; then
     HTTP_DIR=./bluesky_config/static_web/databroker
+else
+    pushd $HTTP_DIR
+    npm run build
+    popd
 fi
 
 # start nginx

@@ -85,6 +85,10 @@ HTTP_DIR=../bluesky-webclient/build
 
 if [ ! -d $HTTP_DIR ]; then
     HTTP_DIR=./bluesky_config/static_web/acqusition
+else
+    pushd $HTTP_DIR
+    npm run build
+    popd
 fi
 
 # start nginx
