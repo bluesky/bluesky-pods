@@ -26,10 +26,16 @@ podman run --pod databroker \
        databroker-server \
        uvicorn --port 8081 databroker_server.main:app
 
+HTTP_DIR=../databroker-client/build
+
+if [ ! -d $HTTP_DIR ]; then
+    HTTP_DIR=./bluesky_config/static_web/databroker
+fi
 
 # start nginx
 podman run --pod databroker \
        -v ./bluesky_config/nginx/databroker.conf:/etc/nginx/nginx.conf:ro \
-       -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
+       -v $HTTP_DIR:/var/www/html:ro \
+       --name=db_reverse_proxy \
        -d --rm \
        nginx

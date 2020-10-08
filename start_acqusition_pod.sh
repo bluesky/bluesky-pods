@@ -81,10 +81,16 @@ podman run --pod acquisition \
        uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
 
 
+HTTP_DIR=../bluesky-webclient/build
+
+if [ ! -d $HTTP_DIR ]; then
+    HTTP_DIR=./bluesky_config/static_web/acqusition
+fi
+
 # start nginx
 podman run --pod acquisition \
        -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
-       -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
+       -v $HTTP_DIR:/var/www/html:ro \
        --name=acq_reverse_proxy \
        -d --rm \
        nginx
