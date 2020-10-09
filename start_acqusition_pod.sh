@@ -81,22 +81,26 @@ podman run --pod acquisition \
        uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
 
 
-HTTP_DIR=../bluesky-webclient/build
+CLIENT_DIR=../bluesky-webclient
 
-if [ ! -d $HTTP_DIR ]; then
-    HTTP_DIR=./bluesky_config/static_web/acqusition
+if [ ! -d $CLIENT_DIR ]; then
+    NGINX_CONTAINER=bluesky-webclient
 else
-    pushd $HTTP_DIR
+    pushd $CLIENT_DIR
+    npm install
     npm run build
     popd
+    MOUNT="-v $CLIENT_DIR/build:/var/www/html:ro"
+    NGINX_CONTAINER=nginx
 fi
 
 # start nginx
 podman run --pod acquisition \
        -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
-       -v $HTTP_DIR:/var/www/html:ro \
+       $MOUNT \
        --name=acq_reverse_proxy \
-       -d --rm \
-       nginx
+       -di --rm \
+       $NGINX_CONTAINER
+
 
 bash start_ad.sh MADSIM1
