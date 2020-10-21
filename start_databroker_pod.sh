@@ -44,5 +44,5 @@ podman run --pod databroker \
        -v ./bluesky_config/nginx/databroker.conf:/etc/nginx/nginx.conf:ro \
        $MOUNT \
        --name=db_reverse_proxy \
-       -d --rm \
+       -dt --rm \
        $NGINX_CONTAINER

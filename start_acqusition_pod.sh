@@ -99,7 +99,7 @@ podman run --pod acquisition \
        -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
        $MOUNT \
        --name=acq_reverse_proxy \
-       -di --rm \
+       -dt --rm \
        $NGINX_CONTAINER
 
 
