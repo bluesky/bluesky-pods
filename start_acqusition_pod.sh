@@ -87,8 +87,7 @@ if [ ! -d $CLIENT_DIR ]; then
     NGINX_CONTAINER=bluesky-webclient
 else
     pushd $CLIENT_DIR
-    npm install
-    npm run build
+    podman run --rm -v .:/src -w /src node:15.0.1-buster bash -c 'npm install && npm run build'
     popd
     MOUNT="-v $CLIENT_DIR/build:/var/www/html:ro"
     NGINX_CONTAINER=nginx
