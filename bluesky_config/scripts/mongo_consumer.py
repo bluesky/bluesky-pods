@@ -1,13 +1,14 @@
 import argparse
 from functools import partial
-import os
+import logging
 from pprint import pprint
 
 import msgpack
 import msgpack_numpy as mpn
 
 from bluesky_kafka import MongoConsumer
-
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("bluesky.kafka").setLevel("DEBUG")
 
 parser = argparse.ArgumentParser(
     description="monogo consumer process",

@@ -9,7 +9,7 @@ IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*
 # Separate out databroker server, kafka consumer that only use main pod via kafka topic
 
 # create the acquisition pod
-podman pod create -n acquisition  -p 9092:9092/tcp -p 60607:9090/tcp
+podman pod create -n acquisition  -p 9092:9092/tcp -p 60610:9090/tcp
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
@@ -78,13 +78,29 @@ podman run --pod acquisition \
        -td --rm \
        --name=acq_queue_server \
        bluesky \
-       python3 -m aiohttp.web -H 0.0.0.0 -P 8081 bluesky_queueserver.server.server:init_func
+       uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
+
+
+CLIENT_DIR=../bluesky-webclient
+
+if [ ! -d $CLIENT_DIR ]; then
+    NGINX_CONTAINER=bluesky-webclient
+else
+    pushd $CLIENT_DIR
+    npm install
+    npm run build
+    popd
+    MOUNT="-v $CLIENT_DIR/build:/var/www/html:ro"
+    NGINX_CONTAINER=nginx
+fi
 
 # start nginx
 podman run --pod acquisition \
        -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
-       -v ./bluesky_config/static_web/databroker:/var/www/html:ro \
-       -d --rm \
-       nginx
+       $MOUNT \
+       --name=acq_reverse_proxy \
+       -dt --rm \
+       $NGINX_CONTAINER
+
 
 bash start_ad.sh MADSIM1
