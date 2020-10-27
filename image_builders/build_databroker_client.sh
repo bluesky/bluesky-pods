@@ -4,8 +4,7 @@ set -e
 set -o xtrace
 
 pushd ../databroker-client
-npm install
-npm run build
+podman run --rm -v .:/src -w /src node:15.0.1-buster bash -c 'npm install && npm run build'
 popd
 
 container=$(buildah from nginx)
