@@ -5,7 +5,7 @@ set -o xtrace
 
 container=$(buildah from bluesky)
 buildah run $container -- python3 -c "import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot"  # Build font cache.
-buildah run $container -- pip3 install jupyterlab voila papermill
+buildah run $container -- pip3 install jupyterlab voila papermill ipympl databroker bluesky-live
 buildah run $container -- pip3 install git+https://github.com/danielballan/papermillhub
 buildah run $container -- jupyter serverextension enable voila --sys-prefix
 buildah run $container -- jupyter serverextension enable papermillhub.nbext --sys-prefix
