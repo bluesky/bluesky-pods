@@ -68,6 +68,8 @@ bash image_builders/build_bluesky_image.sh
 bash image_builders/build_caproto_image.sh
 # build an image for the databroker server
 bash image_builders/build_databroker_server_image.sh
+# build an image for the jupyter single-user server
+bash image_builders/build_jupyter_image.sh
 # build an image with pydm / typhos installed
 bash image_builders/build_typhos_image.sh
 ```

@@ -6,7 +6,7 @@ IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*
 
 ########################################################################################################################
 # Dataaccess pod.
-podman pod create -n databroker -p 6942:9090/tcp
+podman pod create -n databroker -p 6942:9090/tcp -p 9999:8888/tcp
 # start up a mongo
 podman run -dt --pod databroker --rm mongo
 # listen to kafka published from the other pod
@@ -46,3 +46,7 @@ podman run --pod databroker \
        --name=db_reverse_proxy \
        -dt --rm \
        $NGINX_CONTAINER
+
+podman run -dt --pod databroker --rm \
+    -v ./bluesky_config/databroker:/usr/local/share/intake \
+    jupyter
