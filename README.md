@@ -100,6 +100,12 @@ bash image_builders/build_bluesky_snapshot.sh
 bash start_core_pods.sh
 ```
 
+## Generate some example data quickly
+
+```
+podman run --rm --pod acquisition -v ./data_generation_scripts:/data_generation_scripts bluesky bash /data_generation_scripts/generate_example_data.sh
+```
+
 ## Launch bsui (bluesky ipython terminal)
 
 Run
