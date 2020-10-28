@@ -23,6 +23,11 @@ podman run --pod databroker \
        --rm -dt \
        --name=db_server \
        -v ./bluesky_config/databroker:/usr/local/share/intake \
+       -v ./papermill_templates:/usr/local/share/databroker_server/papermill_templates:ro \
+       -e DATABROKER_SERVER_INTERNAL_JUPYTER_BASE_URL=http://localhost:8888 \
+       -e DATABROKER_SERVER_EXTERNAL_JUPYTER_BASE_URL=http://localhost:9999 \
+       -e DATABROKER_SERVER_JUPYTER_ACCESS_TOKEN=dev \
+       -e DATABROKER_SERVER_JUPYTER_PAPERMILL_TEMPLATE=/usr/local/share/databroker_server/papermill_templates/dashboard_template.ipynb \
        databroker-server \
        uvicorn --port 8081 databroker_server.main:app
 
