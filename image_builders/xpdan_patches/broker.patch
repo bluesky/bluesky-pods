@@ -1,0 +1,36 @@
+diff --git a/databroker/tests/test_broker.py b/databroker/tests/test_broker.py
+index 95da7d78..b6209b4b 100644
+--- a/databroker/tests/test_broker.py
++++ b/databroker/tests/test_broker.py
+@@ -47,6 +47,18 @@ def test_uid_roundtrip(db, RE, hw):
+     assert h['start']['uid'] == uid
+ 
+ 
++def test_header_equality(db, RE, hw):
++    RE.subscribe(db.insert)
++    uid, = RE(count([hw.det]))
++    uid2, = RE(count([hw.det]))
++    h = db[uid]
++    h2 = db[uid2]
++
++    assert h != []
++    assert h != h2
++    assert h == db[uid]
++
++
+ def test_no_descriptor_name(db, RE, hw):
+     def local_insert(name, doc):
+         doc.pop('name', None)
+diff --git a/databroker/v1.py b/databroker/v1.py
+index 54c2b98e..1dfbc156 100644
+--- a/databroker/v1.py
++++ b/databroker/v1.py
+@@ -1016,6 +1016,8 @@ class Header:
+         return self.db.prepare_hook('stop', self._stop)
+ 
+     def __eq__(self, other):
++        if not isinstance(other, Header):
++            return False
+         return self.start == other.start
+ 
+     @property

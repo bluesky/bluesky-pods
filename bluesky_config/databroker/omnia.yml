@@ -1,0 +1,17 @@
+sources:
+  omnia:
+    args:
+      paths:
+      - /data/omnia/*.msgpack
+      root_map:
+        /nsls2/xf28id1/data/pe1_data: /data/omnia/nsls2/xf28id1/data/pe1_data
+        f6f129302c62494e1347c262ddb09c0f: /data/omnia/nsls2/xf28id1/data/pe1_data
+      handler_registry:
+        AD_TIFF: databroker.assets.handlers.AreaDetectorTiffHandler
+    driver: bluesky-msgpack-catalog
+    metadata:
+      generated_by:
+        library: databroker_pack
+        version: 0.1.3
+      relative_paths:
+      - ./*.msgpack

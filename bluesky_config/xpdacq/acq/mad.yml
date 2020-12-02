@@ -1,0 +1,35 @@
+archive_base_dir_name: .userbeamtimearchive
+archive_root_dir: /data/xpdacq_archive
+base_dir: /data/xpdacq_data
+beamline_host_name: []
+beamline_id: 28-ID-1
+blconfig_dir_name: xpdConfig
+blconfig_name: xpd_beamline_config.yml
+calib_config_name: xpdAcq_calib_info.yml
+dark_window: 0.1
+facility: NSLS-II
+frame_acquire_time: 0.1
+glbl_yaml_name: glbl.yml
+group: XPD
+home_dir_name: user_data
+image_field: pe1c_image
+owner: PDF
+simulation: false
+shutter_conf: {close: 0, open: 1}
+mask_kwargs:
+  edge: 30
+  lower_thresh: 0.0
+  bs_width: 13
+  tri_offset: 13
+  v_asym: 0
+  alpha: 3.0
+dark_field_key : sc_dk_field_uid
+det_image_field : pe1_image
+exp_broker_name: omnia
+outbound_proxy_address: 'localhost:5678'
+inbound_proxy_address: 'localhost:4567'
+shutter_sleep: 0
+diffraction_dets: ['pe1c', 'pe1', 'pe2c', 'pe2','dexela_image', 'dexela']
+radiograph_names : ['blackfly_det']
+radiogram_dets: ['blackfly_det']
+image_fields: ['pe1c_image', 'pe2c_image', 'dexela_image', 'dexela']
