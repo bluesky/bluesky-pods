@@ -25,11 +25,11 @@ mask_kwargs:
   alpha: 3.0
 dark_field_key : sc_dk_field_uid
 det_image_field : pe1_image
-exp_broker_name: omnia
+exp_broker_name: ae
 outbound_proxy_address: 'localhost:5678'
 inbound_proxy_address: 'localhost:4567'
 shutter_sleep: 0
 diffraction_dets: ['pe1c', 'pe1', 'pe2c', 'pe2','dexela_image', 'dexela']
 radiograph_names : ['blackfly_det']
 radiogram_dets: ['blackfly_det']
-image_fields: ['pe1c_image', 'pe2c_image', 'dexela_image', 'dexela']
+image_fields: ['pe1c_image', 'pe2c_image', 'dexela_image', 'dexela', 'pe2_image']
