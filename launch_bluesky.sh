@@ -32,6 +32,8 @@ podman run --pod acquisition \
        -v ./bluesky_config/ipython:/usr/local/share/ipython \
        -v ./bluesky_config/databroker:/usr/local/share/intake \
        -v ./bluesky_config/happi:/usr/local/share/happi \
+       -v /mnt/store/data_cache/omnia:/data/omnia \
+       -v /mnt/data/bnl/ae_exfil:/data/ae_exfil \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_ADDR_LIST=10.0.2.255 \
        -e EPICS_CA_AUTO_ADDR_LIST=no \

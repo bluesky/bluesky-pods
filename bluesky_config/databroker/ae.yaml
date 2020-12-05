@@ -1,0 +1,16 @@
+sources:
+  ae:
+    args:
+      paths:
+      - /data/ae_exfil/documents/*.msgpack
+      root_map:
+        461eac3c312ab2b518a7d9ef5df7b5f2: /data/ae_exfil/nsls2/xf28id2
+      handler_registry:
+        AD_TIFF: databroker.assets.handlers.AreaDetectorTiffHandler
+    driver: bluesky-msgpack-catalog
+    metadata:
+      generated_by:
+        library: databroker_pack
+        version: 0.1.3
+      relative_paths:
+      - ./*.msgpack
