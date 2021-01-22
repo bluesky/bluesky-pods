@@ -14,6 +14,7 @@ from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.zmq import Publisher as zmqPublisher
 
 from bluesky_adaptive.per_start import adaptive_plan
+from bluesky_kafka import Publisher as kafkaPublisher
 
 from nslsii import configure_bluesky_logging, subscribe_kafka_publisher
 
@@ -54,14 +55,13 @@ RE.subscribe(bec)
 to_recommender = kafkaPublisher(
     topic="adaptive",
     bootstrap_servers="127.0.0.1:9092",
-    key="kafka-unit-test-key",
+    key="adaptive",
     # work with a single broker
     producer_config={
         "acks": 1,
         "enable.idempotence": False,
         "request.timeout.ms": 5000,
-    },
-    serializer=partial(msgpack.dumps, default=mpn.encode),
+    }
 )
 
 
