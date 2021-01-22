@@ -7,5 +7,6 @@ bluesky_config/**/pid/
 __pycache__
 image_builders/pip_cache
 
-.idea/*
-.vagrant/*
+.idea/
+.vagrant/
+.ipynb_checkpoints/

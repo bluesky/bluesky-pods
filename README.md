@@ -68,6 +68,8 @@ bash image_builders/build_bluesky_image.sh
 bash image_builders/build_caproto_image.sh
 # build an image for the databroker server
 bash image_builders/build_databroker_server_image.sh
+# build an image for the jupyter single-user server
+bash image_builders/build_jupyter_image.sh
 # build an image with pydm / typhos installed
 bash image_builders/build_typhos_image.sh
 ```
@@ -96,6 +98,12 @@ bash image_builders/build_bluesky_snapshot.sh
 #     nginx (to proxy services out)
 # and mongo, kafka->mongo client, and the databroker server in the databroker pod
 bash start_core_pods.sh
+```
+
+## Generate some example data quickly
+
+```
+podman run --rm --pod acquisition -v ./data_generation_scripts:/data_generation_scripts bluesky bash /data_generation_scripts/generate_example_data.sh
 ```
 
 ## Launch bsui (bluesky ipython terminal)
@@ -176,9 +184,9 @@ the keys that the adatptive code is expecting.
 ## ...queuely
 
 ```bash
-http POST 0.0.0.0:60607/qs/create_environment
-http POST 0.0.0.0:60607/qs/add_to_queue plan:='{"name":"count", "args":[["det1", "det2"]], "kwargs":{"num":10, "delay":1}}'
-http POST 0.0.0.0:60607/qs/process_queue
+http POST 0.0.0.0:60610/qs/create_environment
+http POST 0.0.0.0:60610/qs/add_to_queue plan:='{"name":"count", "args":[["det1", "det2"]], "kwargs":{"num":10, "delay":1}}'
+http POST 0.0.0.0:60610/qs/process_queue
 ```
 
 and watch the scans run!
