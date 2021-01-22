@@ -2,14 +2,15 @@
 set -e
 set -o xtrace
 
-IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+#IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+IP_ADDR=`ifconfig | sed -En 's/\s*inet (addr:)?(([0-9]{1,3}\.){3}[0-9]{1,3})\s*netmask 255\.255\.255\.0.*/\2/p'`
 
 ###########################################################################################
 # Main acquisition services with adaptive etc
 # Separate out databroker server, kafka consumer that only use main pod via kafka topic
 
 # create the acquisition pod
-podman pod create -n acquisition  -p 9092:9092/tcp -p 60607:9090/tcp
+podman pod create -n acquisition  -p 9092:9092/tcp -p 60607:9090/tcp -p 9200:9200 -p 9300:9300 -p 5601:5601
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
@@ -26,27 +27,35 @@ podman run -dt --pod acquisition --rm mongo
 # start up a zmq proxy
 podman run --pod acquisition -dt --rm  bluesky bluesky-0MQ-proxy 4567 5678
 
-# start elasticsearch
+# start elasticsearch - this can take 30 seconds
 podman run --pod acquisition \
        -dt --rm \
-       --name=acq_elasticsearch \
-       -v /bitnami \
-       bitnami/elasticsearch
+       --name=elasticsearch \
+       -e "discovery.type=single-node" \
+       docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.0-amd64
 
 # start kibana
 podman run --pod acquisition \
        -dt --rm \
-       --name=acq_kibana \
-       -e KIBANA_ELASTICSEARCH_URL=elasticsearch \
-       -v /bitnami \
-       bitnami/kibana
+       --name=kibana \
+       -v `pwd`/bluesky_config/elastic/kibana.yml:'/usr/share/kibana/config/kibana.yml' \
+       docker.elastic.co/kibana/kibana-oss:7.10.0
+
+# set up Filebeat
+podman run --pod acquisition \
+       -dt --rm \
+       --name=filebeat \
+       docker.elastic.co/beats/filebeat-oss:7.10.0 \
+       setup \
+       -e setup.kibana.host=localhost:5601 \
+       -e output.elasticsearch.hosts=["localhost:9200"] \
 
 # set up kafka + zookeeper
 podman run --pod acquisition \
        -dt --rm \
        -e ALLOW_ANONYMOUS_LOGIN=yes \
        -v /bitnami \
-       bitnami/zookeeper:3
+       bitnami/zookeeper:latest
 
 # The listeners still need some work
 # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
@@ -62,15 +71,16 @@ podman run --pod acquisition \
        -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092,PLAINTEXT_HOST://$IP_ADDR:9092 \
        -e KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true \
        -v /bitnami \
-       bitnami/kafka:2
+       -v `pwd`/opt/kafka/logs:'/opt/kafka/logs' \
+       bitnami/kafka:latest
+
 # make sure kafka is alive
 sleep 2
 # create the topic we are going to publish to
 podman exec acq_kafka kafka-topics.sh --create --topic mad.bluesky.documents --bootstrap-server localhost:29092
 
-
 # set up insert into mongo via kafka
-podman run --pod acquisition\
+podman run --pod acquisition \
        -dt --rm \
        -v `pwd`/bluesky_config/scripts:'/app' \
        -w '/app' \
