@@ -6,6 +6,7 @@ bluesky_config/**/log/
 bluesky_config/**/pid/
 __pycache__
 image_builders/pip_cache
+var/
 
 .idea/
 .vagrant/
