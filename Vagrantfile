@@ -73,6 +73,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     cd /vagrant
+    # create the kafka log directory or kafka will fail to start
+    mkdir -p opt/kafka/logs
+    # BUG: create bluesky log directory (nslsii.configure_bluesky_logging should do this)
+    mkdir -p var/log/bluesky
     sudo bash image_builders/build_bluesky_base_image.sh
     sudo bash image_builders/build_bluesky_image.sh
     sudo bash image_builders/build_caproto_image.sh
