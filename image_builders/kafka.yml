@@ -1,0 +1,8 @@
+---
+  abort_run_on_kafka_exception: False
+  bootstrap_servers:
+    - localhost:9092
+  runengine_producer_config:
+    acks: 1
+    enable.idempotence: False
+    request.timeout.ms: 5000
