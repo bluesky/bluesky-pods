@@ -16,6 +16,9 @@ fi
 XAUTH=/tmp/.docker.xauth
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
+# https://stackoverflow.com/questions/24112727/relative-paths-based-on-file-location-instead-of-current-working-directory
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
 if [ "$1" != "" ]; then
     imagename=$1
 else
@@ -29,11 +32,12 @@ podman run --pod acquisition \
        -v $XAUTH:$XAUTH \
        -e XAUTHORITY=$XAUTH \
        -v `pwd`:'/app' -w '/app' \
-       -v ./bluesky_config/ipython:/usr/local/share/ipython \
-       -v ./bluesky_config/databroker:/usr/local/share/intake \
-       -v ./bluesky_config/happi:/usr/local/share/happi \
+       -v $parent_path/bluesky_config/ipython:/usr/local/share/ipython \
+       -v $parent_path/bluesky_config/databroker:/usr/local/share/intake \
+       -v $parent_path/bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_ADDR_LIST=10.0.2.255 \
        -e EPICS_CA_AUTO_ADDR_LIST=no \
+       -e PYTHONPATH=/usr/local/share/ipython\
        $imagename \
        ipython3 --ipython-dir=/usr/local/share/ipython
