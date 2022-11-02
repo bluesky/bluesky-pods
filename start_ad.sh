@@ -16,7 +16,7 @@ PREFIX=${PRE}:
 CONTAINER=ioc${PRE}
 # name of docker image
 SHORT_NAME=synapps-6.1-ad-3.7
-IMAGE=prjemian/${SHORT_NAME}:latest
+IMAGE=docker.io/prjemian/${SHORT_NAME}:latest
 # name of IOC manager (start, stop, status, ...)
 IOC_MANAGER=iocSimDetector/simDetector.sh
 # container will quit unless it has something to run

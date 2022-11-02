@@ -22,7 +22,7 @@ podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.th
 podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v
 
 # start up a mongo
-podman run -dt --pod acquisition --rm mongo
+podman run -dt --pod acquisition --rm docker.io/library/mongo:latest
 # start up a zmq proxy
 podman run --pod acquisition -dt --rm  bluesky bluesky-0MQ-proxy 4567 5678
 # set up kafka + zookeeper
@@ -30,7 +30,7 @@ podman run --pod acquisition \
        -dt --rm \
        -e ALLOW_ANONYMOUS_LOGIN=yes \
        -v /bitnami \
-       bitnami/zookeeper:3
+       docker.io/bitnami/zookeeper:3
 
 # The listeners still need some work
 # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
@@ -46,7 +46,7 @@ podman run --pod acquisition \
        -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092,PLAINTEXT_HOST://$IP_ADDR:9092 \
        -e KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true \
        -v /bitnami \
-       bitnami/kafka:2
+       docker.io/bitnami/kafka:2
 # make sure kafka is alive
 sleep 2
 # create the topic we are going to publish to
@@ -64,7 +64,7 @@ podman run --pod acquisition\
            --kafka_server=localhost:29092 --kafka_group=acq_local_consumers
 
 # start up redis
-podman run -dt --pod acquisition  --rm redis
+podman run -dt --pod acquisition  --rm docker.io/redis
 
 # start up queueserver manager
 podman run --pod acquisition \
@@ -90,7 +90,7 @@ else
     podman run --rm -v .:/src -w /src node:15.0.1-buster bash -c 'npm install && npm run build'
     popd
     MOUNT="-v $CLIENT_DIR/build:/var/www/html:ro"
-    NGINX_CONTAINER=nginx
+    NGINX_CONTAINER=docker.io/nginx
 fi
 
 # start nginx
