@@ -10,7 +10,7 @@ if [ -v "SSH_CONNECTION" ]; then
 	# Unlike the recommendation in the linked SO post,
 	# we are not using docker and thus not using docker's special network.
 	# Instead, we use the IP of the host.
-	IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+	IP_ADDR=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n 1`
 	DISPLAY=`echo $DISPLAY | sed "s/^[^:]*\(.*\)/${IP_ADDR}\1/"`
 fi
 XAUTH=/tmp/.docker.xauth
