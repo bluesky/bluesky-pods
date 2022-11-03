@@ -1,0 +1,8 @@
+FROM bluesky-base
+
+
+RUN pip3 install git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
+RUN pip3 install git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
+RUN pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
+RUN pip3 install nslsii
+RUN pip3 uninstall --yes pyepics

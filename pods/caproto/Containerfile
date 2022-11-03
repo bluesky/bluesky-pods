@@ -1,0 +1,5 @@
+FROM fedora
+RUN dnf -y update
+RUN dnf -y install python3 ipython3 python3-pip python3-numpy python3-netifaces
+RUN pip3 install caproto[standard]
+CMD "python3 -m caproto.ioc_examples.simple --list-pvs"
