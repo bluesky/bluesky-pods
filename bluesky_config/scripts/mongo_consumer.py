@@ -34,12 +34,13 @@ bootstrap_servers = args.kafka_server
 kafka_deserializer = partial(msgpack.loads, object_hook=mpn.decode)
 auto_offset_reset = "latest"
 topics = ["^.*bluesky.documents"]
-
+topic_database_map = {"mad.bluesky.documents": "mad-bluesky-documents"}
 # Create a MongoConsumer that will automatically listen to new beamline topics.
 # The parameter metadata.max.age.ms determines how often the consumer will check for
 # new topics. The default value is 5000ms.
 settings = dict(
     topics=topics,
+    topic_database_map=topic_database_map,
     bootstrap_servers=bootstrap_servers,
     group_id=args.kafka_group,
     mongo_uri=mongo_uri,
