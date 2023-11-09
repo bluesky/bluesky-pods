@@ -30,10 +30,10 @@ db = databroker.catalog['MAD']
 RE = RunEngine()
 bec = BestEffortCallback()
 
-zmq_publisher = zmqPublisher("127.0.0.1:4567")
+zmq_publisher = zmqPublisher("zmq-proxy:4567")
 kafka_publisher = kafkaPublisher(
     topic="mad.bluesky.documents",
-    bootstrap_servers="127.0.0.1:29092",
+    bootstrap_servers="kafka:29092",
     key="kafka-unit-test-key",
     # work with a single broker
     producer_config={
@@ -56,7 +56,7 @@ RE.subscribe(bec)
 
 to_recommender = kafkaPublisher(
     topic="adaptive",
-    bootstrap_servers="127.0.0.1:9092",
+    bootstrap_servers="kafka:9092",
     key="kafka-unit-test-key",
     # work with a single broker
     producer_config={
