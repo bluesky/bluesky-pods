@@ -1,0 +1,113 @@
+---
+version: '3'
+volumes:
+  bitnami-kafka:
+  bitnami:
+
+services:
+  # some simulated IOCs
+  caproto-hello-world:
+    image: caproto
+    tty:
+    init: true
+  caproto-0:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.mini_beamline -v
+    tty:
+    init: true
+  caproto-1:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.random_walk -v
+    tty:
+    init: true
+  caproto-2:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
+    tty:
+    init: true
+  caproto-3:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
+    tty:
+    init: true
+  caproto-4:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.simple -v
+    tty:
+    init: true
+  caproto-5:
+    image: caproto
+    command: python3 -m caproto.ioc_examples.thermo_sim -v
+    tty:
+    init: true
+
+  # zmq bridge
+  zmq-proxy:
+    image: bluesky
+    command: bluesky bluesky-0MQ-proxy 4567 5678
+
+  # kafka
+  zookeeper:
+    image: "docker.io/bitnami/zookeeper:latest"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+    volumes:
+      - bitnami:/bitnami
+  kafka:
+    image: "docker.io/bitnami/kafka:latest"
+    volumes:
+      - bitnami-kafka:/bitnami/kafka
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    ports:
+      - "127.0.0.1:9092:9092"
+    depends_on:
+      - zookeeper
+
+  # mongo
+  mongo:
+    image: docker.io/library/mongo:latest
+    tty:
+
+  # inserter
+  mongo_inserter:
+    image: bluesky
+    volumes:
+      - ../..//bluesky_config/scripts:/app
+    command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
+    working_dir: /app
+    init: true
+    depends_on:
+      - mongo
+      - kafka
+
+  # redis
+  redis:
+    image: docker.io/redis
+
+  # jupyter spy
+  jupyter:
+    image: quay.io/jupyter/scipy-notebook
+    ports:
+      # must be on different port or jlab stuff gets angry and spammy
+      - "127.0.0.1:8890:8888"
+
+  # QS parts
+  queue_manager:
+    image: bluesky
+    command: start-re-manager --kafka_server=kafka:29092
+    depends_on:
+      - kafka
+
+  qs_ws:
+    image: bluesky
+    command: uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
+    ports:
+      - "127.0.0.1:8081:8081"
+    depends_on:
+      - queue_manager
