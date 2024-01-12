@@ -67,7 +67,8 @@ services:
     ports:
       - "127.0.0.1:9092:9092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_started
 
   # mongo
   mongo:
@@ -83,8 +84,10 @@ services:
     working_dir: /app
     init: true
     depends_on:
-      - mongo
-      - kafka
+      mongo:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   # redis
   redis:
@@ -100,9 +103,10 @@ services:
   # QS parts
   queue_manager:
     image: bluesky
-    command: start-re-manager --kafka_server=kafka:29092
+    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console
     depends_on:
-      - kafka
+      kafka:
+        condition: service_started
 
   qs_ws:
     image: bluesky
@@ -110,4 +114,5 @@ services:
     ports:
       - "127.0.0.1:8081:8081"
     depends_on:
-      - queue_manager
+      queue_manager:
+        condition: service_started
