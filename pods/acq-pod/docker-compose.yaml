@@ -44,7 +44,7 @@ services:
   # zmq bridge
   zmq-proxy:
     image: bluesky
-    command: bluesky bluesky-0MQ-proxy 4567 5678
+    command: bluesky-0MQ-proxy 4567 5678
 
   # kafka
   zookeeper:
