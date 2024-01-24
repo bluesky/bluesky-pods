@@ -58,3 +58,14 @@ If podman is running on the machine you are sitting in front of, or if you would
 to run in "headless" mode, no action is required.
 
 ## Run the pod
+
+```sh
+cd compose/acq_pod
+podman compose --in-pod true up
+```
+
+To get a bluesky terminal in this pod run
+
+```sh
+bash launch_bluesky.sh
+```
