@@ -12,7 +12,7 @@ podman run -dt --pod databroker --rm mongo
 # listen to kafka published from the other pod
 podman run --pod databroker \
        -dt --rm \
-       -v `pwd`/bluesky_config/scripts:'/app' \
+       -v `pwd`/../bluesky_config/scripts:'/app' \
        -w '/app' \
        --name=db_mongo_consumer \
        bluesky \
@@ -22,8 +22,8 @@ podman run --pod databroker \
 podman run --pod databroker \
        --rm -dt \
        --name=db_server \
-       -v ./bluesky_config/databroker:/usr/local/share/intake \
-       -v ./papermill_templates:/usr/local/share/databroker_server/papermill_templates:ro \
+       -v ../bluesky_config/databroker:/usr/local/share/intake \
+       -v ../papermill_templates:/usr/local/share/databroker_server/papermill_templates:ro \
        -e DATABROKER_SERVER_INTERNAL_JUPYTER_BASE_URL=http://localhost:8888 \
        -e DATABROKER_SERVER_EXTERNAL_JUPYTER_BASE_URL=http://localhost:9999 \
        -e DATABROKER_SERVER_JUPYTER_ACCESS_TOKEN=dev \
@@ -34,7 +34,7 @@ podman run --pod databroker \
 CLIENT_DIR=../databroker-client
 
 if [ ! -d $CLIENT_DIR ]; then
-    NGINX_CONTAINER=databroker-webclient
+    NGINX_CONTAINER=databroker-client
 else
     pushd $CLIENT_DIR
     podman run --rm -v .:/src -w /src node:15.0.1-buster bash -c 'npm install && npm run build'
@@ -46,12 +46,12 @@ fi
 
 # start nginx
 podman run --pod databroker \
-       -v ./bluesky_config/nginx/databroker.conf:/etc/nginx/nginx.conf:ro \
+       -v ../bluesky_config/nginx/databroker.conf:/etc/nginx/nginx.conf:ro \
        $MOUNT \
        --name=db_reverse_proxy \
        -dt --rm \
        $NGINX_CONTAINER
 
 podman run -dt --pod databroker --rm \
-    -v ./bluesky_config/databroker:/usr/local/share/intake \
-    jupyter
+    -v ../bluesky_config/databroker:/usr/local/share/intake \
+    quay.io/jupyter/scipy-notebook

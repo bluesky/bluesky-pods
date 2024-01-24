@@ -103,7 +103,7 @@ services:
   # QS parts
   queue_manager:
     image: bluesky
-    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console
+    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console ON --keep-re --redis-addr redis
     depends_on:
       kafka:
         condition: service_started
