@@ -1,8 +1,15 @@
-FROM bluesky-base
+FROM fedora
 
+RUN dnf -y update
+RUN dnf -y install python3 ipython3 python3-pip g++ gcc python3-PyQt5 python3-matplotlib python3-devel python3-netifaces python3-h5py python3-scipy python3-numcodecs python3-pandas libpng15 git python3-redis git python3-redis python3-scikit-image python3-zmq python3-kafka python3-pymongo python3-pycurl
+RUN pip3 install caproto[standard] jupyter httpie fastapi uvicorn python-jose[cryptography] passlib[bcrypt] pykafka confluent_kafka
+RUN mkdir /etc/bluesky
+ADD kafka.yml /etc/bluesky/kafka.yml
+RUN python3 -c "import matplotlib.font_manager"  # Build font cache.
 
 RUN pip3 install git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
 RUN pip3 install git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
+RUN pip3 install git+https://github.com/bluesky/bluesky-httpserver.git@master#egg=bluesky-httpserver
 RUN pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
 RUN pip3 install nslsii
 RUN pip3 uninstall --yes pyepics
