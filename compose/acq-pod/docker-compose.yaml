@@ -8,35 +8,42 @@ services:
   # some simulated IOCs
   caproto-hello-world:
     image: caproto
+    build: ../caproto
     tty:
     init: true
   caproto-0:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.mini_beamline -v
     tty:
     init: true
   caproto-1:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v
     tty:
     init: true
   caproto-2:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
     tty:
     init: true
   caproto-3:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
     tty:
     init: true
   caproto-4:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.simple -v
     tty:
     init: true
   caproto-5:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.thermo_sim -v
     tty:
     init: true
@@ -44,6 +51,7 @@ services:
   # zmq bridge
   zmq-proxy:
     image: bluesky
+    build: ../bluesky
     command: bluesky-0MQ-proxy 4567 5678
 
   # kafka
@@ -78,6 +86,7 @@ services:
   # inserter
   mongo_inserter:
     image: bluesky
+    build: ../bluesky
     volumes:
       - ../..//bluesky_config/scripts:/app
     command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
@@ -103,6 +112,7 @@ services:
   # QS parts
   queue_manager:
     image: bluesky
+    build: ../bluesky
     command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console ON --keep-re --redis-addr redis
     depends_on:
       kafka:
