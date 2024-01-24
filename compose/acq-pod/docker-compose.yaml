@@ -121,9 +121,12 @@ services:
 
   qs_ws:
     image: bluesky
-    command: uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
+    build: ../bluesky
+    command: uvicorn --host qs_ws --port 60610 bluesky_httpserver.server:app
+    env:
+      - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
     ports:
-      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:60610:60610"
     depends_on:
       queue_manager:
         condition: service_started
