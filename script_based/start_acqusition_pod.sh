@@ -13,13 +13,13 @@ podman pod create -n acquisition  -p 9092:9092/tcp -p 60610:9090/tcp
 # just to get minimal IOC running
 podman run -dt --pod acquisition --rm caproto
 
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.mini_beamline -v
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.simple -v
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.thermo_sim -v
-podman run -dt --pod acquisition --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.mini_beamline -v
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.random_walk -v
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.simple -v
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.thermo_sim -v
+podman run -dt --pod acquisition --init --rm caproto python3 -m caproto.ioc_examples.trigger_with_pc -v
 
 # start up a mongo
 podman run -dt --pod acquisition --rm docker.io/library/mongo:latest
@@ -56,7 +56,7 @@ podman exec acq_kafka kafka-topics.sh --create --topic mad.bluesky.documents --b
 # set up insert into mongo via kafka
 podman run --pod acquisition\
        -dt --rm \
-       -v `pwd`/bluesky_config/scripts:'/app' \
+       -v `pwd`/../bluesky_config/scripts:'/app' \
        -w '/app' \
        --name=acq_mongo_consumer \
        bluesky \
@@ -95,7 +95,7 @@ fi
 
 # start nginx
 podman run --pod acquisition \
-       -v ./bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
+       -v ../bluesky_config/nginx/acqusition.conf:/etc/nginx/nginx.conf:ro \
        $MOUNT \
        --name=acq_reverse_proxy \
        -dt --rm \

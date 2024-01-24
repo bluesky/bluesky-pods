@@ -8,35 +8,42 @@ services:
   # some simulated IOCs
   caproto-hello-world:
     image: caproto
+    build: ../caproto
     tty:
     init: true
   caproto-0:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.mini_beamline -v
     tty:
     init: true
   caproto-1:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v
     tty:
     init: true
   caproto-2:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
     tty:
     init: true
   caproto-3:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
     tty:
     init: true
   caproto-4:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.simple -v
     tty:
     init: true
   caproto-5:
     image: caproto
+    build: ../caproto
     command: python3 -m caproto.ioc_examples.thermo_sim -v
     tty:
     init: true
@@ -44,7 +51,8 @@ services:
   # zmq bridge
   zmq-proxy:
     image: bluesky
-    command: bluesky bluesky-0MQ-proxy 4567 5678
+    build: ../bluesky
+    command: bluesky-0MQ-proxy 4567 5678
 
   # kafka
   zookeeper:
@@ -64,10 +72,12 @@ services:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_MESSAGE_MAX_BYTES=1048588
     ports:
       - "127.0.0.1:9092:9092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_started
 
   # mongo
   mongo:
@@ -77,14 +87,17 @@ services:
   # inserter
   mongo_inserter:
     image: bluesky
+    build: ../bluesky
     volumes:
       - ../..//bluesky_config/scripts:/app
     command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
     working_dir: /app
     init: true
     depends_on:
-      - mongo
-      - kafka
+      mongo:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   # redis
   redis:
@@ -100,14 +113,20 @@ services:
   # QS parts
   queue_manager:
     image: bluesky
-    command: start-re-manager --kafka_server=kafka:29092
+    build: ../bluesky
+    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console ON --keep-re --redis-addr redis
     depends_on:
-      - kafka
+      kafka:
+        condition: service_started
 
   qs_ws:
     image: bluesky
-    command: uvicorn bluesky_queueserver.server.server:app --host localhost --port 8081
+    build: ../bluesky
+    command: uvicorn --host qs_ws --port 60610 bluesky_httpserver.server:app
+    env:
+      - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
     ports:
-      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:60610:60610"
     depends_on:
-      - queue_manager
+      queue_manager:
+        condition: service_started
