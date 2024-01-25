@@ -73,8 +73,6 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_MESSAGE_MAX_BYTES=1048588
-    ports:
-      - "127.0.0.1:9092:9092"
     depends_on:
       zookeeper:
         condition: service_started
@@ -106,9 +104,10 @@ services:
   # jupyter spy
   jupyter:
     image: quay.io/jupyter/scipy-notebook
-    ports:
-      # must be on different port or jlab stuff gets angry and spammy
-      - "127.0.0.1:8890:8888"
+    command: start-notebook.py --IdentityProvider.token='' --NotebookApp.base_url='/jlab' --NotebookApp.allow_origin='*'
+    volumes:
+      - ../..//bluesky_config/:/home/jovyan/config
+      - ../../bluesky_config/databroker:/usr/local/share/intake
 
   # QS parts
   queue_manager:
@@ -125,8 +124,18 @@ services:
     command: uvicorn --host qs_ws --port 60610 bluesky_httpserver.server:app
     env:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
-    ports:
-      - "127.0.0.1:60610:60610"
     depends_on:
       queue_manager:
+        condition: service_started
+
+  proxy:
+    image: docker.io/nginx
+    ports:
+      - "127.0.0.1:11973:11973"
+    volumes:
+      - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      jupyter:
+        condition: service_started
+      qs_ws:
         condition: service_started

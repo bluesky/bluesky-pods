@@ -69,3 +69,6 @@ To get a bluesky terminal in this pod run
 ```sh
 bash launch_bluesky.sh
 ```
+
+There is a jupyterlab instance running in the pod available at
+`http://localhost:11973/jlab`
