@@ -1,0 +1,5 @@
+FROM ghcr.io/bluesky/databroker:latest
+
+RUN apt update
+RUN apt install git npm --yes
+RUN PUBLIC_PATH=/tiled/ui/ pip install git+https://github.com/tacaswell/tiled.git@npm_build_prefix

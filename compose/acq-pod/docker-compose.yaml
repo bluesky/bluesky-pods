@@ -3,6 +3,7 @@ version: '3'
 volumes:
   bitnami-kafka:
   bitnami:
+  data:
 
 services:
   # some simulated IOCs
@@ -82,6 +83,17 @@ services:
     image: docker.io/library/mongo:latest
     tty:
 
+  # tiled
+  tld:
+    image: sub-tiled
+    build: ../sub-tiled
+    volumes:
+      - data:/nsls2/data/mad
+      - type: bind
+        source: ../../bluesky_config/tiled
+        target: /usr/local/share/tiled
+    command: tiled serve config /usr/local/share/tiled
+
   # inserter
   mongo_inserter:
     image: bluesky
@@ -130,6 +142,7 @@ services:
 
   proxy:
     image: docker.io/nginx
+    init: true
     ports:
       - "127.0.0.1:11973:11973"
     volumes:
@@ -138,4 +151,6 @@ services:
       jupyter:
         condition: service_started
       qs_ws:
+        condition: service_started
+      tld:
         condition: service_started
