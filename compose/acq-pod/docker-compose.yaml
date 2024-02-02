@@ -4,6 +4,7 @@ volumes:
   bitnami-kafka:
   bitnami:
   data:
+  mongo:
 
 services:
   # some simulated IOCs
@@ -82,6 +83,8 @@ services:
   mongo:
     image: docker.io/library/mongo:latest
     tty:
+    volumes:
+      - mongo:/data/db
 
   # tiled
   tld:
