@@ -3,6 +3,8 @@ version: '3'
 volumes:
   bitnami-kafka:
   bitnami:
+  data:
+  mongo:
 
 services:
   # some simulated IOCs
@@ -73,8 +75,6 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_MESSAGE_MAX_BYTES=1048588
-    ports:
-      - "127.0.0.1:9092:9092"
     depends_on:
       zookeeper:
         condition: service_started
@@ -83,6 +83,19 @@ services:
   mongo:
     image: docker.io/library/mongo:latest
     tty:
+    volumes:
+      - mongo:/data/db
+
+  # tiled
+  tld:
+    image: sub-tiled
+    build: ../sub-tiled
+    volumes:
+      - data:/nsls2/data/mad
+      - type: bind
+        source: ../../bluesky_config/tiled
+        target: /usr/local/share/tiled
+    command: tiled serve config /usr/local/share/tiled
 
   # inserter
   mongo_inserter:
@@ -106,9 +119,10 @@ services:
   # jupyter spy
   jupyter:
     image: quay.io/jupyter/scipy-notebook
-    ports:
-      # must be on different port or jlab stuff gets angry and spammy
-      - "127.0.0.1:8890:8888"
+    command: start-notebook.py --IdentityProvider.token='' --NotebookApp.base_url='/jlab' --NotebookApp.allow_origin='*'
+    volumes:
+      - ../..//bluesky_config/:/home/jovyan/config
+      - ../../bluesky_config/databroker:/usr/local/share/intake
 
   # QS parts
   queue_manager:
@@ -119,14 +133,29 @@ services:
       kafka:
         condition: service_started
 
-  qs_ws:
+  qs_api:
     image: bluesky
     build: ../bluesky
-    command: uvicorn --host qs_ws --port 60610 bluesky_httpserver.server:app
+    command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
     env:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
-    ports:
-      - "127.0.0.1:60610:60610"
     depends_on:
       queue_manager:
+        condition: service_started
+
+  proxy:
+    image: docker.io/nginx
+    init: true
+    ports:
+      - "127.0.0.1:11973:11973"
+    volumes:
+      - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro
+      - ../../bluesky_config/nginx/locs.d:/etc/nginx/locs.d:ro
+      - ../../bluesky_config/nginx/index.html:/var/www/html/index.html:ro
+    depends_on:
+      jupyter:
+        condition: service_started
+      qs_api:
+        condition: service_started
+      tld:
         condition: service_started
