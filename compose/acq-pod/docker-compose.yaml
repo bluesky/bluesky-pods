@@ -133,10 +133,10 @@ services:
       kafka:
         condition: service_started
 
-  qs_ws:
+  qs_api:
     image: bluesky
     build: ../bluesky
-    command: uvicorn --host qs_ws --port 60610 bluesky_httpserver.server:app
+    command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
     env:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
     depends_on:
@@ -150,10 +150,12 @@ services:
       - "127.0.0.1:11973:11973"
     volumes:
       - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro
+      - ../../bluesky_config/nginx/locs.d:/etc/nginx/locs.d:ro
+      - ../../bluesky_config/nginx/index.html:/var/www/html/index.html:ro
     depends_on:
       jupyter:
         condition: service_started
-      qs_ws:
+      qs_api:
         condition: service_started
       tld:
         condition: service_started
