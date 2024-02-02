@@ -78,3 +78,8 @@ X11UseLocalhost no
 
 If podman is running on the machine you are sitting in front of, or if you would like
 to run in "headless" mode, no action is required.
+
+## Other examples
+
+- [Wright Group bluesky-in-a-box](https://github.com/wright-group/bluesky-in-a-box)
+- [sst-pods](https://github.com/NSLS-II-SST/sst_pods/) [based on an early version of this repo]
