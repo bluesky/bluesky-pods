@@ -4,6 +4,7 @@ from functools import partial
 from queue import Empty
 
 import IPython
+import matplotlib.pyplot as plt
 
 import redis
 import msgpack
@@ -101,3 +102,5 @@ ip.user_ns.update(devs)
 # do from another
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"count", "args":[["det"]]}'
+
+plt.ion()
