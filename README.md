@@ -20,6 +20,8 @@ To get a bluesky terminal in this pod run
 bash launch_bluesky.sh
 ```
 
+On a Mac, [XQuartz](https://www.xquartz.org) is required to display the output of the Best Effort Callback. 
+
 There is a jupyterlab instance, a tiled instance, and a Queueserver http API
 instance running the pod which are proxied via nginx.  If the pod is running
 `http://localhost:11973` will provide links to each.
