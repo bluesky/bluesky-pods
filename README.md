@@ -11,6 +11,7 @@ development.
 
 ```sh
 cd compose/acq_pod
+bash generate_env.sh
 podman compose --in-pod true up
 ```
 
