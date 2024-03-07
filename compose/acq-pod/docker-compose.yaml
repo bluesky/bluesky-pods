@@ -6,6 +6,7 @@ volumes:
   data:
   mongo:
 
+
 services:
   # some simulated IOCs
   caproto-hello-world:
@@ -128,7 +129,7 @@ services:
   queue_manager:
     image: bluesky
     build: ../bluesky
-    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console ON --keep-re --redis-addr redis
+    command: start-re-manager --kafka-server=kafka:29092 --zmq-publish-console ON --redis-addr redis
     depends_on:
       kafka:
         condition: service_started
@@ -139,9 +140,23 @@ services:
     command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
     env:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
+      - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615
+      - QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625
     depends_on:
       queue_manager:
         condition: service_started
+
+  queue-monitor:
+    image: queue-monitor
+    build: ../queue-monitor
+    environment:
+      - DISPLAY=${LOCAL_DISPLAY}
+      - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615
+      - QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    user: qtuser
+    # profiles: [ "qt" ] # Not supported in podman-compose as of 1.0.6
 
   proxy:
     image: docker.io/nginx

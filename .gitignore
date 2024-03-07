@@ -7,3 +7,4 @@ bluesky_config/**/pid/
 __pycache__
 image_builders/pip_cache
 .ipynb_checkpoints/
+*.env
