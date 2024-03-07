@@ -2,4 +2,4 @@ FROM ghcr.io/bluesky/databroker:latest
 
 RUN apt update
 RUN apt install git npm --yes
-RUN TILED_BUILD_PUBLIC_PATH=/tiled/ui/ pip install git+https://github.com/bluesky/tiled.git@main
+RUN TILED_BUILD_PUBLIC_PATH=/tiled/ui/ pip install tiled
