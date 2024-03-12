@@ -20,6 +20,11 @@ To get a bluesky terminal in this pod run
 bash launch_bluesky.sh
 ```
 
+To get a default QT gui for the queue server run
+```sh
+bash launch_bluesky.sh bluesky queue-monitor
+```
+
 On a Mac, [XQuartz](https://www.xquartz.org) is required to display the output of the Best Effort Callback. 
 
 There is a jupyterlab instance, a tiled instance, and a Queueserver http API

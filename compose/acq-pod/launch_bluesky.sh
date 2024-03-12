@@ -45,6 +45,13 @@ else
     imagename="bluesky"
 fi
 
+if [ "$2" != "" ]; then
+    CMD=$2
+else
+    CMD="ipython3 --ipython-dir=/usr/local/share/ipython"
+fi
+
+
 podman run --pod pod_acq-pod  \
        --net acq-pod_default \
        --network-alias sneaky \
@@ -61,5 +68,7 @@ podman run --pod pod_acq-pod  \
        -e EPICS_CA_ADDR_LIST=10.0.2.255 \
        -e EPICS_CA_AUTO_ADDR_LIST=no \
        -e PYTHONPATH=/usr/local/share/ipython\
+       -e QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615\
+       -e QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625\
        $imagename \
-       ipython3 --ipython-dir=/usr/local/share/ipython
+       $CMD \
