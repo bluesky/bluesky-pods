@@ -6,6 +6,7 @@ volumes:
   data:
   mongo:
 
+
 services:
   # some simulated IOCs
   caproto-hello-world:
@@ -92,9 +93,7 @@ services:
     build: ../sub-tiled
     volumes:
       - data:/nsls2/data/mad
-      - type: bind
-        source: ../../bluesky_config/tiled
-        target: /usr/local/share/tiled
+      - ../../bluesky_config/tiled:/usr/local/share/tiled
     command: tiled serve config /usr/local/share/tiled
 
   # inserter
