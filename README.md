@@ -10,7 +10,7 @@ development.
 ## Run the pod
 
 ```sh
-cd compose/acq_pod
+cd compose/acq-pod
 podman compose --in-pod true up
 ```
 
