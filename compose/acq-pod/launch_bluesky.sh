@@ -39,8 +39,8 @@ xauth nlist $LOCAL_DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 # https://stackoverflow.com/questions/24112727/relative-paths-based-on-file-location-instead-of-current-working-directory
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-if [ -z "BSUI_PROFILE_DIR" ]; then
-    echo "BSUI_PROFILE_DIR is set to $BSUI_PROFILE_DIR"
+if [ -z "BLUESKY_PROFILE_DIR" ]; then
+    echo "BLUESKY_PROFILE_DIR is set to $BLUESKY_PROFILE_DIR"
 fi
 
 if [ "$1" != "" ]; then
