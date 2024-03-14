@@ -1,32 +1,29 @@
-import logging
 import json
+import logging
 from functools import partial
 from queue import Empty
 
-import IPython
-import matplotlib.pyplot as plt
-
-import redis
-import msgpack
-import msgpack_numpy as mpn
-
-from bluesky import RunEngine
 import bluesky.plans as bp
-
-from bluesky.callbacks.best_effort import BestEffortCallback
-from bluesky.callbacks.zmq import Publisher as zmqPublisher
-from bluesky_kafka import Publisher as kafkaPublisher
-
-from bluesky_adaptive.per_start import adaptive_plan
-
 import databroker
 import happi
 import happi.loader
+import IPython
+import matplotlib.pyplot as plt
+import msgpack
+import msgpack_numpy as mpn
+import redis
+from bluesky import RunEngine
+from bluesky.callbacks.best_effort import BestEffortCallback
+from bluesky.callbacks.zmq import Publisher as zmqPublisher
+from bluesky.plans import *
+from bluesky_kafka import Publisher as kafkaPublisher
+
+# from bluesky_adaptive.per_start import adaptive_plan # This is incompatible with the queue-server (default args)
 
 ip = IPython.get_ipython()
 
-hclient = happi.Client(path='/usr/local/share/happi/test_db.json')
-db = databroker.catalog['MAD']
+hclient = happi.Client(path="/usr/local/share/happi/test_db.json")
+db = databroker.catalog["MAD"]
 
 RE = RunEngine()
 bec = BestEffortCallback()
@@ -97,7 +94,8 @@ from_recommender = RedisQueue(redis.StrictRedis(host="localhost", port=6379, db=
 
 devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_items]}
 
-ip.user_ns.update(devs)
+if ip is not None:
+    ip.user_ns.update(devs)
 
 # do from another
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'

@@ -20,6 +20,9 @@ To get a bluesky terminal in this pod run
 bash launch_bluesky.sh
 ```
 
+Setting the environment variable `BLUESKY_PROFILE_DIR` to an ipython profile will allow you to use a custom profile in the `launch_bluesky.sh` script or the Queue Server container.
+In both cases, the RunEngine (RE), databroker, and Kafka subscriptions must be initialized in the startup profile.
+
 To get a default QT gui for the queue server run
 ```sh
 bash launch_bluesky.sh bluesky queue-monitor
@@ -45,6 +48,7 @@ instance running the pod which are proxied via nginx.  If the pod is running
   containers can be accessed via DNS with their names.
 
 
+# Contents
 
 ## Get podman
 
@@ -85,6 +89,9 @@ X11UseLocalhost no
 
 If podman is running on the machine you are sitting in front of, or if you would like
 to run in "headless" mode, no action is required.
+
+## Repository Contents
+
 
 ## Other examples
 
