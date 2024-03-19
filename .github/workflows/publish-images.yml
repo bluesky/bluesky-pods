@@ -1,6 +1,6 @@
 name: Build and Publish Container Images
 
-on
+on:
   push:
     branches:
       - main
