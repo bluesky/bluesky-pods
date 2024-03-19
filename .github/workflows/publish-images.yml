@@ -6,6 +6,10 @@ on:
       - bld-ghcr-bluesky
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-bluesky
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
@@ -16,16 +20,24 @@ jobs:
     steps:
     - name: Check out the repo
       uses: actions/checkout@v4
-
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
       with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
     - name: Build and push image to GitHub Container Registry
       uses: docker/build-push-action@v5
@@ -33,4 +45,5 @@ jobs:
         context: .
         file: ./compose/test-to-delete/Containerfile
         push: true
-        tags: ghcr.io/nsls2/bluesky:latest
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
