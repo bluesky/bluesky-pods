@@ -1,4 +1,0 @@
-FROM fedora
-
-RUN dnf -y install python3 ipython3 python3-pip 
-

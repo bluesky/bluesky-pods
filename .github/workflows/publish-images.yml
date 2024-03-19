@@ -3,12 +3,12 @@ name: Build and Publish Container Images
 on:
   push:
     branches:
-      - bld-ghcr-bluesky
+      - main
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-bluesky
+  IMAGE_NAME_BASE: ${{ github.repository }}
 
 jobs:
   build-and-publish:
@@ -37,13 +37,13 @@ jobs:
       id: meta
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BASE }}-bluesky
 
     - name: Build and push image to GitHub Container Registry
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./compose/test-to-delete/Containerfile
+        file: ./compose/bluesky/Containerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
