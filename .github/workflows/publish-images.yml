@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - fix-ghcr-build
   workflow_dispatch:
 
 env:
