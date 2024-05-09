@@ -39,6 +39,10 @@ xauth nlist $LOCAL_DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 # https://stackoverflow.com/questions/24112727/relative-paths-based-on-file-location-instead-of-current-working-directory
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
+if [ -z "BLUESKY_PROFILE_DIR" ]; then
+    echo "BLUESKY_PROFILE_DIR is set to $BLUESKY_PROFILE_DIR"
+fi
+
 if [ "$1" != "" ]; then
     imagename=$1
 else
@@ -61,7 +65,8 @@ podman run --pod pod_acq-pod  \
        -v $XAUTH:/tmp/.docker.xauth \
        -e XAUTHORITY=/tmp/.docker.xauth \
        -v `pwd`:'/app' -w '/app' \
-       -v $parent_path/../../bluesky_config/ipython:/usr/local/share/ipython \
+       -v ${BLUESKY_PROFILE_DIR:-$parent_path/../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_default \
+       -v $parent_path/../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py \
        -v $parent_path/../../bluesky_config/databroker:/usr/local/share/intake \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
