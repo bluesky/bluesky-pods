@@ -11,7 +11,7 @@ development.
 
 ```sh
 cd compose/acq-pod
-podman compose --in-pod true up
+podman-compose --in-pod true up
 ```
 
 To get a bluesky terminal in this pod run
