@@ -1,28 +1,113 @@
-<html>
-  <head>
-<title>beamline-in-a-pod</title>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing Page for Agent Services</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    p,
+    a {
+      color: #666666;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: #007BFF;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container h2 {
+      margin-top: 0;
+    }
+  </style>
 </head>
+
 <body>
-<h1>beamline-in-a-pod</h1>
+  <div class="container">
+    <h1>beamline-in-a-pod</h1>
+    <h2>Jupyter</h2>
+    <ul>
+      <li><a href="jlab">Jupyter lab instance</a></li>
+    </ul>
 
-<h2>Jupyter</h2>
+    <h2>Tiled</h2>
+    <ul>
+      <li><a href="tiled/api/v1/">API endpoint</a></li>
+      <li><a href="tiled/ui/browse">User Interface</a></li>
+    </ul>
 
-<ul>
-  <li> <a href="jlab">Jupyter lab instance: </a>
-</ul>
+    <h2>QueueServer</h2>
+    <ul>
+      <li><a href="qs/api/">API endpoint</a></li>
+    </ul>
+  </div>
 
+  <div class="container">
+    <h1>Landing Page for Agent Services!</h1>
+    <p>This is the default landing page for the agent services.</p>
 
-<h2>Tiled</h2>
+    <h2>Available Agents</h2>
+    <ul>
+      <li><a href="/kmeans-agent/docs">Kmeans Agent Service (FastAPI)</a></li>
+      <li><a href="/gsas-agent/docs">GSAS Service (FastAPI)</a></li>
+      <li><a href="/kmeans-gsas-agent/docs">KMeans-GSAS (FastAPI)</a></li>
+      <li><a href="/peakfit-agent/docs">Peak Fit Service (FastAPI)</a></li>
+      <li><a href="/kmeans-peakfit-agent/docs">Kmeans Peakfit Service (FastAPI)</a></li>
+      <li><a href="/sva-peakfit-agent/docs">Scientific Value Agent (SVA) Peakfit Service (FastAPI)</a></li>
+    </ul>
 
-<ul>
-  <li> <a href="tiled/api/v1/">API endpoint</a>
-   <li ><a href="tiled/ui/browse">User Interface</a>
-</ul>
+    <h2>Available Agent User Interfaces</h2>
+    <ul>
+      <li><a href="/kmeans-agent-ui/">KMeans Agent UI</a></li>
+      <li><a href="/gsas/">GSAS UI</a></li>
+      <li><a href="/kmeans-gsas/">KMeans-GSAS UI</a></li>
+      <li><a href="/peakfit/">Peakfit UI</a></li>
+      <li><a href="/kmeans-peakfit/">Kmeans Peakfit UI</a></li>
+      <li><a href="/sva-peakfit/">Scientific Value Agent (SVA) Peakfit UI</a></li>
+    </ul>
 
-<h2>QueueServer</h2>
-<ul>
-  <li><a href="qs/api/">API endpoint</a>
-</ul>
-
+    <p>Click on the links above to access our services.</p>
+  </div>
 </body>
+
 </html>

@@ -14,3 +14,6 @@ RUN pip3 install git+https://github.com/bluesky/bluesky-widgets.git@master#egg=b
 RUN pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
 RUN pip3 install nslsii
 RUN pip3 uninstall --yes pyepics
+RUN pip3 install tiled[all]
+RUN pip3 install git+https://github.com/bluesky/databroker.git@v2.0.0b45#egg=databroker
+RUN pip3 install scikit-learn scipy

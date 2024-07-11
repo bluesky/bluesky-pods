@@ -122,6 +122,7 @@ services:
     volumes:
       - ../..//bluesky_config/:/home/jovyan/config
       - ../../bluesky_config/databroker:/usr/local/share/intake
+      - ../../bluesky_config/diffraction-sim:/home/jovyan/diffraction-sim
 
   # QS parts
   # Loads QServer looking at an ipython profile named profile_qserver, optionally loaded from BLUESKY_PROFILE_DIR
@@ -136,22 +137,54 @@ services:
       - ${BLUESKY_PROFILE_DIR:-../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_qserver:ro
       - ../../bluesky_config/databroker:/usr/local/share/intake:ro
       - ../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro
+      - ../../bluesky_config/databroker/mad-tld.yml:/usr/etc/tiled/profiles/mad-tld.yml:ro
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
     depends_on:
       kafka:
+        condition: service_started
+      redis:
         condition: service_started
 
   qs_api:
     image: bluesky
     build: ../bluesky
     command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
-    env:
+    environment:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625
     depends_on:
       queue_manager:
         condition: service_started
+
+  kmeans-agent:
+    image: bluesky
+    command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --root-path /kmeans-agent
+    environment:
+      - TILED_API_KEY="ABCDABCD"
+      - HTTPSERVER_API_KEY=mad
+      - BS_AGENT_STARTUP_SCRIPT_PATH=/src/scripts/kmeans-agent.py
+    volumes:
+      - ../../bluesky_config/scripts:/src/scripts/:ro
+    depends_on:
+      qs_api:
+        condition: service_started
+
+  kmeans-agent-ui:
+    image: ghcr.io/maffettone/bluesky-adaptive-ui:latest
+    command: python3 /src/bluesky-adaptive-ui/bluesky_adaptive_ui/default_dash_app/app.py --agent-address kmeans-agent --agent-port 8000
+    environment:
+      - DASH_REQUEST_PATHNAME_PREFIX=/kmeans-agent-ui/
+    volumes:
+      - ../../../bluesky-adaptive-ui:/src/bluesky-adaptive-ui:ro
+    depends_on:
+      kmeans-agent:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8050"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
 
   proxy:
     image: docker.io/nginx
@@ -169,3 +202,5 @@ services:
         condition: service_started
       tld:
         condition: service_started
+      kmeans-agent-ui:
+        condition: service_healthy
