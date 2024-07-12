@@ -67,8 +67,8 @@ podman run --pod pod_acq-pod  \
        -v `pwd`:'/app' -w '/app' \
        -v ${BLUESKY_PROFILE_DIR:-$parent_path/../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_default \
        -v $parent_path/../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py \
-       -v $parent_path/../../bluesky_config/databroker:/usr/local/share/intake \
-       -v $parent_path/../../bluesky_config/databroker/mad-tld.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
+       -v $parent_path/../../bluesky_config/databroker/mad.yml:/usr/local/share/intake/mad.yml \
+       -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_ADDR_LIST=10.0.2.255 \
