@@ -7,6 +7,7 @@ trees:
 uvicorn:
   host: 0.0.0.0
   port: 8000
+  root_path: /tiled
 authentication:
   allow_anonymous_access: true
   single_user_api_key: "ABCDABCD"
