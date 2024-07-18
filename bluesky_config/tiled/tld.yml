@@ -1,3 +1,4 @@
+# Tiled Server Config
 trees:
   - path: /
     tree: databroker.mongo_normalized:MongoAdapter.from_uri

@@ -12,5 +12,7 @@ RUN pip3 install git+https://github.com/bluesky/bluesky-queueserver.git@main#egg
 RUN pip3 install git+https://github.com/bluesky/bluesky-httpserver.git@master#egg=bluesky-httpserver
 RUN pip3 install git+https://github.com/bluesky/bluesky-widgets.git@master#egg=bluesky-widgets
 RUN pip3 install git+https://github.com/pcdshub/happi.git@master#egg=happi
+RUN pip3 install tiled[all]
+RUN pip3 install --pre --upgrade databroker
 RUN pip3 install nslsii
 RUN pip3 uninstall --yes pyepics

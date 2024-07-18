@@ -136,16 +136,19 @@ services:
       - ${BLUESKY_PROFILE_DIR:-../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_qserver:ro
       - ../../bluesky_config/databroker:/usr/local/share/intake:ro
       - ../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro
+      - ../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml:ro
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
     depends_on:
       kafka:
+        condition: service_started
+      redis:
         condition: service_started
 
   qs_api:
     image: bluesky
     build: ../bluesky
     command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
-    env:
+    environment:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625

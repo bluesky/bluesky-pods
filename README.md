@@ -11,7 +11,7 @@ development.
 
 ```sh
 cd compose/acq-pod
-podman compose --in-pod true up
+podman-compose --in-pod true up
 ```
 
 To get a bluesky terminal in this pod run
@@ -20,10 +20,24 @@ To get a bluesky terminal in this pod run
 bash launch_bluesky.sh
 ```
 
+From inside `bsui` a set of simulated devices are available, as are databases and `tiled` servers.
+Data can be accessed via `databroker`, a `tiled` profile, or a remote `tiled` server.
+
+```python
+RE(scan([det], motor, -10,10,10)) # will produce a liveplot and data
+db[1] # or db[uid] can be used to access the data
+from tiled.client import from_profile, from_uri
+c = from_profile("MAD")
+c[1] # or c[uid]
+c = from_uri("http://tld:8000/")
+c[1] # or c[uid]
+```
+
 Setting the environment variable `BLUESKY_PROFILE_DIR` to an ipython profile will allow you to use a custom profile in the `launch_bluesky.sh` script or the Queue Server container.
 In both cases, the RunEngine (RE), databroker, and Kafka subscriptions must be initialized in the startup profile.
 
 To get a default QT gui for the queue server run
+
 ```sh
 bash launch_bluesky.sh bluesky queue-monitor
 ```
