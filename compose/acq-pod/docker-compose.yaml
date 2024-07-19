@@ -12,43 +12,43 @@ services:
   caproto-hello-world:
     image: caproto
     build: ../caproto
-    tty:
+    tty: true
     init: true
   caproto-0:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.mini_beamline -v
-    tty:
+    tty: true
     init: true
   caproto-1:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v
-    tty:
+    tty: true
     init: true
   caproto-2:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
-    tty:
+    tty: true
     init: true
   caproto-3:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
-    tty:
+    tty: true
     init: true
   caproto-4:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.simple -v
-    tty:
+    tty: true
     init: true
   caproto-5:
     image: caproto
     build: ../caproto
     command: python3 -m caproto.ioc_examples.thermo_sim -v
-    tty:
+    tty: true
     init: true
 
   # zmq bridge
