@@ -29,7 +29,7 @@ db[1] # or db[uid] can be used to access the data
 from tiled.client import from_profile, from_uri
 c = from_profile("MAD")
 c[1] # or c[uid]
-c = from_uri("http://tld:8000/")
+c = from_uri("http://proxy:11973/tiled")
 c[1] # or c[uid]
 ```
 
