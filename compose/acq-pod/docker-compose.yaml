@@ -83,7 +83,7 @@ services:
   # mongo
   mongo:
     image: docker.io/library/mongo:latest
-    tty:
+    tty: true
     volumes:
       - mongo:/data/db
 
