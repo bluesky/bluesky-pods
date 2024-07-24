@@ -9,7 +9,8 @@ from bluesky_adaptive.agents.base import Agent, AgentConsumer
 from bluesky_adaptive.server import register_variable, shutdown_decorator, startup_decorator
 from bluesky_queueserver_api.http import REManagerAPI
 from databroker.client import BlueskyRun
-from tiled.client import from_uri
+from httpx import ConnectError, HTTPStatusError
+from tiled.client import from_profile, from_uri
 
 logger = logging.getLogger(__name__)
 
@@ -74,11 +75,16 @@ class PodBaseAgent(Agent, ABC):
             bootstrap_servers="kafka:29092",
             group_id=f"echo-{str(uuid.uuid4())[:8]}",
         )
+        # Try to connect through the proxy, but if timing is an issue, go direct
+        try:
+            tiled_container = from_uri("http://proxy:11973/tiled", api_key="ABCDABCD")
+        except ConnectError or HTTPStatusError:
+            tiled_container = from_profile("MAD")
         return dict(
             kafka_consumer=kafka_consumer,
             kafka_producer=None,
-            tiled_data_node=from_uri("http://proxy:11973/tiled", api_key="ABCDABCD"),
-            tiled_agent_node=from_uri("http://proxy:11973/tiled", api_key="ABCDABCD"),
+            tiled_data_node=tiled_container,
+            tiled_agent_node=tiled_container,
             qserver=qs,
         )
 

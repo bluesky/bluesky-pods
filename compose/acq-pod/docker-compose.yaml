@@ -172,6 +172,8 @@ services:
         condition: service_started
       tld:
         condition: service_started
+      reactive-agent:
+        condition: service_started
 
   reactive-agent:
     image: bluesky
@@ -182,8 +184,7 @@ services:
       - BS_AGENT_STARTUP_SCRIPT_PATH=/src/bluesky-adaptive/reactive_random_walk.py
     volumes:
       - ../bluesky-adaptive/:/src/bluesky-adaptive/:ro
+      - ../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml
     depends_on:
       qs_api:
-        condition: service_started
-      proxy:
         condition: service_started
