@@ -172,3 +172,18 @@ services:
         condition: service_started
       tld:
         condition: service_started
+
+  reactive-agent:
+    image: bluesky
+    command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --root-path /reactive-agent
+    environment:
+      - TILED_API_KEY="ABCDABCD"
+      - HTTPSERVER_API_KEY=mad
+      - BS_AGENT_STARTUP_SCRIPT_PATH=/src/bluesky-adaptive/reactive_random_walk.py
+    volumes:
+      - ../bluesky-adaptive/:/src/bluesky-adaptive/:ro
+    depends_on:
+      qs_api:
+        condition: service_started
+      proxy:
+        condition: service_started
