@@ -36,6 +36,17 @@ else
 fi
 xauth nlist $LOCAL_DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
+# Get the IP adresses of all caproto IOC containers
+containers=($(podman ps --filter name=caproto --format "{{.Names}}"))
+EPICS_CA_ADDR_LIST=""
+
+for container in "${containers[@]}"; do
+    container_ip=$(podman inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
+    echo "Adding $container_ip to EPICS_CA_ADDR_LIST"
+    EPICS_CA_ADDR_LIST="$EPICS_CA_ADDR_LIST $container_ip"
+done
+EPICS_CA_ADDR_LIST="${EPICS_CA_ADDR_LIST:1}"
+
 # https://stackoverflow.com/questions/24112727/relative-paths-based-on-file-location-instead-of-current-working-directory
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
@@ -71,7 +82,7 @@ podman run --pod pod_acq-pod  \
        -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
-       -e EPICS_CA_ADDR_LIST=10.0.2.255 \
+       -e EPICS_CA_ADDR_LIST="${EPICS_CA_ADDR_LIST}" \
        -e EPICS_CA_AUTO_ADDR_LIST=no \
        -e PYTHONPATH=/usr/local/share/ipython\
        -e QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615\
