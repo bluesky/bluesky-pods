@@ -36,45 +36,6 @@ else
 fi
 xauth nlist $LOCAL_DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
-# Get the IP adresses of all caproto IOC containers; and list unique broadcast addresses. Should only be one.
-# No assumption of ipcalc being available.
-# Functions to convert an IP address to binary and back
-ip_to_bin() {
-    local ip="$1"
-    IFS=. read -r a b c d <<< "$ip"
-    printf "%08d%08d%08d%08d\n" "$(bc <<< "obase=2; $a")" "$(bc <<< "obase=2; $b")" "$(bc <<< "obase=2; $c")" "$(bc <<< "obase=2; $d")"
-}
-bin_to_ip() {
-    local bin="$1"
-    echo "$((2#${bin:0:8})).$((2#${bin:8:8})).$((2#${bin:16:8})).$((2#${bin:24:8}))"
-}
-containers=($(podman ps --filter name=caproto --format "{{.Names}}"))
-EPICS_CA_ADDR_LIST=""
-broadcasts=()
-for container in "${containers[@]}"; do
-    ip_address=$(podman inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
-    subnet_len=$(podman inspect -f '{{range .NetworkSettings.Networks}}{{.IPPrefixLen}}{{end}}' "$container")
-    # Calculate the network mask in binary
-    subnet_mask_bin=$(printf "%-32s" $(head -c $subnet_len < /dev/zero | tr '\0' '1'))
-    subnet_mask_bin="${subnet_mask_bin// /0}"
-    # Calculate the inverted subnet mask
-    inv_subnet_mask_bin=$(echo "$subnet_mask_bin" | tr '01' '10')
-    # Convert the IP address to binary
-    ip_address_bin=$(ip_to_bin "$ip_address")
-    # Calculate the network address (bitwise AND)
-    network_address_bin=$(echo "$ip_address_bin" | awk -v mask="$subnet_mask_bin" '{for(i=1;i<=32;i++)printf "%d", substr($0,i,1) * substr(mask,i,1)}')
-    # Calculate the broadcast address (bitwise OR with inverted subnet mask)
-    broadcast_address_bin=$(echo "$network_address_bin" | awk -v inv_mask="$inv_subnet_mask_bin" '{for(i=1;i<=32;i++)printf "%d", substr($0,i,1) + substr(inv_mask,i,1)}')
-    # Convert the broadcast address to a readable IP address
-    broadcast_address=$(bin_to_ip "$broadcast_address_bin")
-    broadcasts+=($broadcast_address)
-done
-uniques=($(for v in "${broadcasts[@]}"; do echo "$v";done| sort| uniq| xargs))
-for addr in "${uniques[@]}"; do
-    EPICS_CA_ADDR_LIST="$EPICS_CA_ADDR_LIST $addr"
-done
-EPICS_CA_ADDR_LIST="${EPICS_CA_ADDR_LIST:1}"
-echo "EPICS_CA_ADDR_LIST=$EPICS_CA_ADDR_LIST"
 
 # https://stackoverflow.com/questions/24112727/relative-paths-based-on-file-location-instead-of-current-working-directory
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
@@ -111,8 +72,7 @@ podman run --pod pod_acq-pod  \
        -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
-       -e EPICS_CA_ADDR_LIST="${EPICS_CA_ADDR_LIST}" \
-       -e EPICS_CA_AUTO_ADDR_LIST=no \
+       -e EPICS_CA_AUTO_ADDR_LIST=YES \
        -e PYTHONPATH=/usr/local/share/ipython\
        -e QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615\
        -e QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625\
