@@ -48,6 +48,9 @@ There is a jupyterlab instance, a tiled instance, and a Queueserver http API
 instance running the pod which are proxied via nginx.  If the pod is running
 `http://localhost:11973` will provide links to each.
 
+## Notes
+If using a version of podman between 1.1 and 1.2 there is a bug that has been [fixed](https://github.com/containers/podman-compose/pull/978), but not yet released.
+For a work around, rename the `Containerfile` to `Dockerfile` and use podman-compose. 
 
 ## Terms
 
