@@ -1,60 +1,15 @@
 ---
-version: '3'
+version: "3"
 volumes:
   bitnami-kafka:
   bitnami:
   data:
   mongo:
 
-
 services:
-  # some simulated IOCs
-  # caproto-hello-world:
-  #   image: caproto
-  #   build: ../caproto
-  #   tty:
-  #   init: true
-  # caproto-0:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.mini_beamline -v
-  #   tty:
-  #   init: true
-  # caproto-1:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.random_walk -v
-  #   tty:
-  #   init: true
-  # caproto-2:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
-  #   tty:
-  #   init: true
-  # caproto-3:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
-  #   tty:
-  #   init: true
-  # caproto-4:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.simple -v
-  #   tty:
-  #   init: true
-  # caproto-5:
-  #   image: caproto
-  #   build: ../caproto
-  #   command: python3 -m caproto.ioc_examples.thermo_sim -v
-  #   tty:
-  #   init: true
-
   # zmq bridge
   zmq-proxy:
-    image: bluesky
-    build: ../bluesky
+    image: ghcr.io/bluesky/bluesky-pods-bluesky:main
     command: bluesky-0MQ-proxy 4567 5678
 
   # kafka
@@ -89,8 +44,7 @@ services:
 
   # tiled
   tld:
-    image: sub-tiled
-    build: ../sub-tiled
+    image: ghcr.io/maffettone/tiled-sub
     volumes:
       - data:/nsls2/data/mad
       - ../../bluesky_config/tiled:/usr/local/share/tiled
@@ -98,8 +52,7 @@ services:
 
   # inserter
   mongo_inserter:
-    image: bluesky
-    build: ../bluesky
+    image: ghcr.io/bluesky/bluesky-pods-bluesky
     volumes:
       - ../..//bluesky_config/scripts:/app
     command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
@@ -127,8 +80,7 @@ services:
   # QS parts
   # Loads QServer looking at an ipython profile named profile_qserver, optionally loaded from BLUESKY_PROFILE_DIR
   queue_manager:
-    image: bluesky
-    build: ../bluesky
+    image: ghcr.io/bluesky/bluesky-pods-bluesky:main
     command: start-re-manager --startup-profile qserver --keep-re --zmq-publish-console ON --redis-addr redis
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
@@ -146,8 +98,7 @@ services:
         condition: service_started
 
   qs_api:
-    image: bluesky
-    build: ../bluesky
+    image: ghcr.io/bluesky/bluesky-pods-bluesky:main
     command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
     environment:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
@@ -157,7 +108,7 @@ services:
       queue_manager:
         condition: service_started
 
-  kmeans-agent:
+  agent:
     image: bluesky
     command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --root-path /kmeans-agent
     environment:
@@ -170,8 +121,8 @@ services:
       qs_api:
         condition: service_started
 
-  kmeans-agent-ui:
-    image: bluesky
+  agent-ui:
+    image: ghcr.io/maffettone/bluesky-adaptive-ui:latest
     command: python3 /src/bluesky-adaptive-ui/bluesky_adaptive_ui/default_dash_app/app.py --agent-address kmeans-agent --agent-port 8000
     environment:
       - DASH_REQUEST_PATHNAME_PREFIX=/kmeans-agent-ui/
@@ -195,4 +146,12 @@ services:
       - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro
       - ../../bluesky_config/nginx/locs.d:/etc/nginx/locs.d:ro
       - ../../bluesky_config/nginx/index.html:/var/www/html/index.html:ro
-
+    depends_on:
+      jupyter:
+        condition: service_started
+      qs_api:
+        condition: service_started
+      tld:
+        condition: service_started
+      kmeans-agent-ui:
+        condition: service_healthy

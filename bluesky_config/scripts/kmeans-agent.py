@@ -2,7 +2,7 @@ import logging
 import os
 import uuid
 from abc import ABC
-from typing import Iterable
+from typing import Iterable, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -105,17 +105,49 @@ class PodBaseAgent(Agent, ABC):
         self.close_and_restart(clear_tell_cache=True)
 
     def unpack_run(self, run):
+        """Unpack into x shaped (n, 2) and y shaped (n, m)"""
         data = run["primary"]["data"].read()
-        x = np.array([data[motor_name].data for motor_name in self.motor_names]).flatten()
+        x = np.array([data[motor_name].data for motor_name in self.motor_names]).T
         y = np.array(data[self.data_key])
         if y.ndim == 3:
-            y = y[0]
-        if y.ndim == 2:
-            y = y[1]
+            y = y[:, 1, :]
+        elif y.ndim == 2:
+            y = y[1, :].reshape(1, -1)
         return x, y
 
     def measurement_plan(self, point):
         return "agent_move_and_measure", [], {"x": point[0], "y": point[1]}
+
+    def _tell(self, uid):
+        """Hack over private tell, to allow for multiple docs to be returned
+
+        Parameters
+        ----------
+        uid : str
+            Unique key to grab from Tiled.
+        """
+        run = self.exp_catalog[uid]
+        try:
+            independent_variable, dependent_variable = self.unpack_run(run)
+        except KeyError as e:
+            logger.warning(f"Ignoring key error in unpack for data {uid}:\n {e}")
+            return
+        logger.debug("Telling agent about some new data.")
+        docs = self.tell(independent_variable, dependent_variable)
+        if not isinstance(docs, Sequence):
+            docs = [docs]
+        for doc in docs:
+            doc["exp_uid"] = uid
+            self._write_event("tell", doc)
+        self.tell_cache.append(uid)
+
+    def tell(self, x, y):
+        """Loop if multiple points are given"""
+        docs = []
+        for i in range(len(x)):
+            doc = super().tell(x[i], y[i])
+            docs.append(doc)
+        return docs
 
     @staticmethod
     def get_beamline_objects():
@@ -171,9 +203,12 @@ class PassiveKmeansAgent(PodBaseAgent, ClusterAgentBase):
     def tell(self, x, y):
         """Update tell using relative info"""
         x = x - self._motor_origins
-        doc = super().tell(x, y)
-        doc["absolute_position_offset"] = self._motor_origins
-        return doc
+        docs = super().tell(x, y)
+        if not isinstance(docs, Sequence):
+            docs = [docs]
+        for doc in docs:
+            doc["absolute_position_offset"] = self._motor_origins
+        return docs
 
     def report(self, **kwargs):
         arr = np.array(self.observable_cache)
@@ -279,11 +314,11 @@ class ActiveKmeansAgent(PassiveKmeansAgent):
 
     @property
     def bounds(self):
-        return self._bounds
+        return np.array(self._bounds).tolist()
 
     @bounds.setter
     def bounds(self, value: ArrayLike):
-        self._bounds = value
+        self._bounds = np.array(value)
 
     def server_registrations(self) -> None:
         self._register_property("bounds")
@@ -291,9 +326,12 @@ class ActiveKmeansAgent(PassiveKmeansAgent):
 
     def tell(self, x, y):
         """A tell that adds to the local discrete knowledge cache, as well as the standard caches"""
-        doc = super().tell(x, y)
-        self.knowledge_cache.add(make_hashable(discretize(doc["independent_variable"], self.motor_resolution)))
-        return doc
+        docs = super().tell(x, y)
+        if not isinstance(docs, Sequence):
+            docs = [docs]
+        for doc in docs:
+            self.knowledge_cache.add(make_hashable(discretize(doc["independent_variable"], self.motor_resolution)))
+        return docs
 
     def _sample_uncertainty_proxy(self, batch_size=1):
         """Some Dan Olds magic to cast the distance from a cluster as an uncertainty. Then sample there
@@ -326,7 +364,7 @@ class ActiveKmeansAgent(PassiveKmeansAgent):
         # retreive centers
         centers = self.model.cluster_centers_
 
-        if self.bounds.size == 2:
+        if self._bounds.size == 2:
             # One dimensional case, Use the Dan Olds approach
             # calculate distances of all measurements from the centers
             distances = self.model.transform(sorted_observables)
@@ -334,7 +372,7 @@ class ActiveKmeansAgent(PassiveKmeansAgent):
             min_landscape = distances.min(axis=1)
             # Assume a 1d scan
             # generate 'uncertainty weights' - as a polynomial fit of the golf-score for each point
-            _x = np.arange(*self.bounds, self.motor_resolution)
+            _x = np.arange(*self._bounds, self.motor_resolution)
             if batch_size is None:
                 batch_size = len(_x)
             uwx = polyval(_x, polyfit(sorted_independents, min_landscape, deg=5))
@@ -342,7 +380,7 @@ class ActiveKmeansAgent(PassiveKmeansAgent):
             return pick_from_distribution(_x, uwx, num_picks=batch_size), centers
         else:
             # assume a 2d scan, use a linear model to predict the uncertainty
-            grid = make_wafer_grid_list(*self.bounds.ravel(), step=self.motor_resolution)
+            grid = make_wafer_grid_list(*self._bounds.ravel(), step=self.motor_resolution)
             labels = self.model.predict(sorted_observables)
             proby_preds = LogisticRegression().fit(sorted_independents, labels).predict_proba(grid)
             shannon = -np.sum(proby_preds * np.log(1 / proby_preds), axis=-1)
