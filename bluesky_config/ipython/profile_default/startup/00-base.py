@@ -17,6 +17,7 @@ from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.zmq import Publisher as zmqPublisher
 from bluesky.plans import *
 from bluesky_kafka import Publisher as kafkaPublisher
+from bluesky_queueserver import is_re_worker_active
 
 # from bluesky_adaptive.per_start import adaptive_plan # This is incompatible with the queue-server (default args)
 
@@ -96,6 +97,8 @@ devs = {v.name: v for v in [happi.loader.from_container(_) for _ in hclient.all_
 
 if ip is not None:
     ip.user_ns.update(devs)
+elif is_re_worker_active():
+    globals().update(devs)
 
 # do from another
 # http POST 0.0.0.0:8081/add_to_queue plan:='{"plan":"scan", "args":[["det"], "motor", -1, 1, 10]}'
