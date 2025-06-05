@@ -42,7 +42,26 @@ To get a default QT gui for the queue server run
 bash launch_bluesky.sh bluesky queue-monitor
 ```
 
-On a Mac, [XQuartz](https://www.xquartz.org) is required to display the output of the Best Effort Callback. 
+On a Mac, [XQuartz](https://www.xquartz.org) is required to display the output of the Best Effort Callback or QT UI.
+You will need to add your en0 IP address to Xauth. One route to this is described [here](https://github.com/chanezon/docker-tips/blob/master/x11/README.md).
+
+```bash
+$ export DISPLAY_MAC=`ifconfig en0 | grep "inet " | cut -d " " -f2`:0
+$ xauth list
+pc34.home/unix:0  MIT-MAGIC-COOKIE-1  491476ce33cxxx86d4bfbcea45
+pc34.home:0  MIT-MAGIC-COOKIE-1  491476ce33cxxx86d4bfbcea45
+$ export DISPLAY=$DISPLAY_MAC
+$ xauth
+Using authority file /Users/pat/.Xauthority
+xauth> add 192.168.64.1:0 . 491476ce33cxxx86d4bfbcea45
+xauth> exit
+Writing authority file /Users/pat/.Xauthority
+$ xauth list
+pc34.home/unix:0  MIT-MAGIC-COOKIE-1  491476ce33cxxx86d4bfbcea45
+pc34.home:0  MIT-MAGIC-COOKIE-1  491476ce33cxxx86d4bfbcea45
+192.168.64.1:0  MIT-MAGIC-COOKIE-1  491476ce33cxxx86d4bfbcea45
+pc34:docker-tips pat$ docker run -e DISPLAY=$DISPLAY_MAC -v ~/.Xauthority:/root/.Xauthority -it jess/gimp
+```
 
 There is a jupyterlab instance, a tiled instance, and a Queueserver http API
 instance running the pod which are proxied via nginx.  If the pod is running
