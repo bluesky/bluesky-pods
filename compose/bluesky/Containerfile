@@ -10,10 +10,11 @@ RUN dnf -y update && \
 # Install UV from Astral
 RUN pip3 install uv
 
-# Use UV to accelerate Python package installations
-RUN uv pip install --system\
-    caproto[standard] jupyter httpie fastapi uvicorn[standard] bluesky-tiled-plugins\
-    python-jose[cryptography] passlib[bcrypt] pykafka confluent_kafka nslsii tiled[all] scikit-learn scipy
+# Use wheels for stable install of dependencies. Compilation with advancing fedora can cause issues.
+RUN pip3 install \
+    jupyter httpie fastapi uvicorn[standard] bluesky-tiled-plugins\
+    python-jose[cryptography] passlib[bcrypt] pykafka confluent_kafka tiled[all] scikit-learn scipy\
+    caproto[standard]!=1.2.0
 
 # Create a configuration directory and add configuration files
 RUN mkdir -p /etc/bluesky
@@ -23,14 +24,16 @@ ADD kafka.yml /etc/bluesky/kafka.yml
 RUN python3 -c "import matplotlib.font_manager"
 
 # Use UV for Bluesky and related dependencies
+RUN uv pip install --system git+https://github.com/bluesky/ophyd.git@main#egg=ophyd
+RUN uv pip install --system git+https://github.com/bluesky/bluesky.git@main#egg=bluesky
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
-RUN uv pip install --system git+https://github.com/bluesky/bluesky-httpserver.git@master#egg=bluesky-httpserver
+RUN uv pip install --system git+https://github.com/bluesky/bluesky-httpserver.git@main#egg=bluesky-httpserver
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-widgets.git@master#egg=bluesky-widgets
 RUN uv pip install --system git+https://github.com/pcdshub/happi.git@master#egg=happi
-RUN uv pip install --system git+https://github.com/bluesky/databroker.git@v2.0.0b58#egg=databroker
+RUN uv pip install --system --pre 'databroker>=2.0.0b1,<3.0.0'
 
 
 # Remove unnecessary packages (if needed)
 RUN pip3 uninstall --yes pyepics
-RUN uv pip install --system json-rpc dash dash-daq requests
+RUN uv pip install --system json-rpc dash dash-daq requests qtpy
