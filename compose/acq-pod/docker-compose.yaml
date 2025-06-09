@@ -89,7 +89,7 @@ services:
     volumes:
       - data:/nsls2/data/mad
       - ../../bluesky_config/tiled:/usr/local/share/tiled
-    command: tiled serve config /usr/local/share/tiled
+    command: tiled serve config /usr/local/share/tiled/tld.yml
 
   # inserter
   mongo_inserter:

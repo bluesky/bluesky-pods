@@ -31,7 +31,9 @@ RUN uv pip install --system git+https://github.com/bluesky/bluesky-queueserver.g
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-httpserver.git@main#egg=bluesky-httpserver
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-widgets.git@master#egg=bluesky-widgets
 RUN uv pip install --system git+https://github.com/pcdshub/happi.git@master#egg=happi
-RUN uv pip install --system --pre 'databroker>=2.0.0b1,<3.0.0'
+
+# Use Wheels for databroker and related dependencies
+RUN pip3 install --pre 'databroker[all]>=2.0.0b1,<3.0.0'
 
 
 # Remove unnecessary packages (if needed)
