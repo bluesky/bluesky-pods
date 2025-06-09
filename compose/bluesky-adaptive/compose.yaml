@@ -1,0 +1,44 @@
+# Compose an agent, tiled server, and database on the same network.
+
+version: '3'
+
+volumes:
+  mongo:
+  data:
+
+networks:
+  mock_agent:
+    driver: bridge
+
+services:
+  mongo:
+    image: docker.io/library/mongo:latest
+    volumes:
+      - mongo:/data/db
+    networks:
+      - mock_agent
+
+  tiled:
+    image: sub-tiled
+    build: ../sub-tiled
+    volumes:
+      - data:/nsls2/data/mad
+      - ../../bluesky_config/tiled:/usr/local/share/tiled
+    networks:
+      - mock_agent
+    command: tiled serve config /usr/local/share/tiled/tiled-direct.yml
+
+  mock_agent:
+    image: bluesky
+    build: ../bluesky
+    environment:
+      - USE_TILED=true
+      - BS_AGENT_STARTUP_SCRIPT_PATH=/src/bluesky-adaptive/mock_agent.py
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./mock_agent.py:/src/bluesky-adaptive/mock_agent.py
+    networks:
+      - mock_agent
+    command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --port 8000
+  
