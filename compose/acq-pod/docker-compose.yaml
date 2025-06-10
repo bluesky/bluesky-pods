@@ -10,42 +10,56 @@ services:
   # some simulated IOCs
   caproto-hello-world:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     tty: true
     init: true
   caproto-0:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.mini_beamline -v
     tty: true
     init: true
   caproto-1:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v
     tty: true
     init: true
   caproto-2:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
     tty: true
     init: true
   caproto-3:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
     tty: true
     init: true
   caproto-4:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.simple -v
     tty: true
     init: true
   caproto-5:
     image: caproto
-    build: ../caproto
+    build: 
+      context: ../caproto
+      dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.thermo_sim -v
     tty: true
     init: true
@@ -53,7 +67,9 @@ services:
   # zmq bridge
   zmq-proxy:
     image: bluesky
-    build: ../bluesky
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
     command: bluesky-0MQ-proxy 4567 5678
 
   # kafka
@@ -85,7 +101,9 @@ services:
   # tiled
   tld:
     image: sub-tiled
-    build: ../sub-tiled
+    build:
+      context: ../sub-tiled
+      dockerfile: Containerfile
     volumes:
       - data:/nsls2/data/mad
       - ../../bluesky_config/tiled:/usr/local/share/tiled
@@ -94,7 +112,9 @@ services:
   # inserter
   mongo_inserter:
     image: bluesky
-    build: ../bluesky
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
     volumes:
       - ../..//bluesky_config/scripts:/app
     command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
@@ -122,7 +142,9 @@ services:
   # Loads QServer looking at an ipython profile named profile_qserver, optionally loaded from BLUESKY_PROFILE_DIR
   queue_manager:
     image: bluesky
-    build: ../bluesky
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
     command: start-re-manager --startup-profile qserver --keep-re --zmq-publish-console ON --redis-addr redis
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
@@ -141,7 +163,9 @@ services:
 
   qs_api:
     image: bluesky
-    build: ../bluesky
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
     command: uvicorn --host qs_api --port 60610 bluesky_httpserver.server:app
     environment:
       - QSERVER_HTTP_SERVER_SINGLE_USER_API_KEY=mad
@@ -172,6 +196,9 @@ services:
 
   reactive-agent:
     image: bluesky
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
     command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --root-path /reactive-agent
     environment:
       - TILED_API_KEY="ABCDABCD"
