@@ -39,12 +39,28 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BASE }}-bluesky
 
-      - name: Build and push image to GitHub Container Registry
+      # Build and push the 'latest' tag
+      - name: Build and push latest
         uses: docker/build-push-action@v5
         with:
           context: ./compose/bluesky
-          file: ./compose/bluesky/Containerfile
+          file: ./compose/bluesky/Containerfile.latest
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          # Use the standard meta outputs for the base tags plus ":latest"
+          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BASE }}-bluesky:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+
+      # Build and push the 'rolling' tag, but don't fail the entire job if it fails
+      - name: Build and push rolling
+        if: always()
+        continue-on-error: true
+        uses: docker/build-push-action@v5
+        with:
+          context: ./compose/bluesky
+          file: ./compose/bluesky/Containerfile.rolling
+          push: true
+          # Apply just the rolling tag, or combine if desired
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BASE }}-bluesky:rolling
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64

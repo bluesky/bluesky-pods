@@ -10,11 +10,27 @@ RUN dnf -y update && \
 # Install UV from Astral
 RUN pip3 install uv
 
+
 # Use wheels for stable install of dependencies. Compilation with advancing fedora can cause issues.
 RUN pip3 install \
-    jupyter httpie fastapi uvicorn[standard] bluesky-tiled-plugins\
-    python-jose[cryptography] passlib[bcrypt] pykafka confluent_kafka tiled[all] scikit-learn scipy\
-    caproto[standard]!=1.2.0
+    jupyter \
+    httpie \
+    fastapi \
+    uvicorn[standard] \
+    bluesky-tiled-plugins\
+    python-jose[cryptography] \
+    passlib[bcrypt] \
+    pykafka \
+    confluent_kafka \
+    scikit-learn \
+    scipy\
+    caproto[standard]!=1.2.0 \
+    json-rpc \
+    dash \
+    dash-daq \
+    requests \
+    qtpy
+
 
 # Create a configuration directory and add configuration files
 RUN mkdir -p /etc/bluesky
@@ -23,19 +39,16 @@ ADD kafka.yml /etc/bluesky/kafka.yml
 # Build font cache for matplotlib
 RUN python3 -c "import matplotlib.font_manager"
 
-# Use UV for Bluesky and related dependencies
+# Use UV for Bluesky and related dependencies compiling from source
 RUN uv pip install --system git+https://github.com/bluesky/ophyd.git@main#egg=ophyd
-RUN uv pip install --system git+https://github.com/bluesky/bluesky.git@main#egg=bluesky
+RUN uv pip install --system git+https://github.com/bluesky/bluesky.git@main#egg=Bluesky
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-httpserver.git@main#egg=bluesky-httpserver
 RUN uv pip install --system git+https://github.com/bluesky/bluesky-widgets.git@master#egg=bluesky-widgets
 RUN uv pip install --system git+https://github.com/pcdshub/happi.git@master#egg=happi
-
-# Use Wheels for databroker and related dependencies
-RUN pip3 install --pre 'databroker[all]>=2.0.0b1,<3.0.0'
-
+RUN uv pip install --system "tiled[all] @ git+https://github.com/bluesky/tiled.git@main#egg=tiled"
+RUN uv pip install --system "databroker[all] @ git+https://github.com/bluesky/databroker.git@main#egg=databroker"
 
 # Remove unnecessary packages (if needed)
 RUN pip3 uninstall --yes pyepics
-RUN uv pip install --system json-rpc dash dash-daq requests qtpy
