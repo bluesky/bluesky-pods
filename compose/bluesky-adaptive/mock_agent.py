@@ -54,11 +54,11 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
         self.independent_cache = []
         self.dependent_cache = []
 
-    def close_and_restart(self, *, clear_uid_cache=False, retell_all=False, reason=""):
+    def close_and_restart(self, *, clear_uid_cache=False, reingest_all=False, reason=""):
         if clear_uid_cache:
             self.clear_caches()
         return super().close_and_restart(
-            clear_uid_cache=clear_uid_cache, retell_all=retell_all, reason=reason
+            clear_uid_cache=clear_uid_cache, reingest_all=reingest_all, reason=reason
         )
 
     @property
