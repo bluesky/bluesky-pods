@@ -69,17 +69,26 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
     def n_clusters(self, value):
         self.model.set_params(n_clusters=int(value))
         self.close_and_restart()
+    @property 
+    def direct_to_queue(self) -> bool:
+        return self._direct_to_queue
+    
+    @direct_to_queue.setter
+    def direct_to_queue(self, flag: bool):
+        self._direct_to_queue = flag
+
 
     def server_registrations(self) -> None:
         self._register_method("clear_caches")
         self._register_property("n_clusters")
+        self._register_property("direct_to_queue", pv_type="bool")
         return super().server_registrations()
 
     # ==========================Useful behavior for clustering, caching, restarting ========================== #
 
     def unpack_run(self, *args, **kwargs):
-        """Mock unpack run method for clustering that returns a [2,] array for x and a [1, 10] array for y."""
-        x = np.random.rand(2)
+        """Mock unpack run method for clustering that returns a [1,] array for x and a [1, 10] array for y."""
+        x = np.random.rand(1)
         y = np.random.rand(1, 10)
         return x, y
 
@@ -105,4 +114,5 @@ def shutdown_agent():
 
 
 register_variable("Agent Name", agent, "instance_name")
+register_variable("known_uid_cache", agent, "known_uid_cache")
 # ==========================This is the necessary code to start the agent========================== #
