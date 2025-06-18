@@ -121,7 +121,6 @@ class ReactiveAgent(Agent, ABC):
         )
 
     def suggest(self, n):
-        super().ask(n)
         """Generates a reactive walk, but logs some perlin noise as a proxy for decision logic"""
         if self._last_value is None:
             return (
