@@ -33,7 +33,9 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
         if use_tiled:
             logger.info("Using Tiled for agent data storage.")
             try:
-                tiled_container = from_uri("http://tiled:8000", api_key="ABCDABCD")
+                tiled_container = from_uri(
+                    "http://tiled_local:8000", api_key="ABCDABCD"
+                )
             except ConnectError or HTTPStatusError:
                 tiled_container = from_profile("MAD")
             kwargs["tiled_agent_node"] = tiled_container
