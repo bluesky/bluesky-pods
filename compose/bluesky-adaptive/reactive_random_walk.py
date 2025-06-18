@@ -109,7 +109,7 @@ class ReactiveAgent(Agent, ABC):
             perlin_noise = perlin(x, y, seed=None) / freq + perlin_noise
         return perlin_noise
 
-    def tell(self, x, y):
+    def ingest(self, x, y):
         self._last_value = y
         return dict(independent_variable=x, observable=y)
 
@@ -120,7 +120,7 @@ class ReactiveAgent(Agent, ABC):
             brain=self._make_perlin_noise(),
         )
 
-    def ask(self, n):
+    def suggest(self, n):
         super().ask(n)
         """Generates a reactive walk, but logs some perlin noise as a proxy for decision logic"""
         if self._last_value is None:
@@ -204,7 +204,7 @@ class ReactiveRandomWalker(ReactiveAgent, PodBaseAgent):
 
 
 # ==========================This is the necassary code to start the agent========================== #
-agent = ReactiveRandomWalker(target=np.random.rand(), ask_on_tell=False)
+agent = ReactiveRandomWalker(target=np.random.rand(), suggest_on_ingest=False)
 
 
 @startup_decorator
