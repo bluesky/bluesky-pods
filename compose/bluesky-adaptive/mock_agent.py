@@ -56,7 +56,9 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
         self.independent_cache = []
         self.dependent_cache = []
 
-    def close_and_restart(self, *, clear_uid_cache=False, reingest_all=False, reason=""):
+    def close_and_restart(
+        self, *, clear_uid_cache=False, reingest_all=False, reason=""
+    ):
         if clear_uid_cache:
             self.clear_caches()
         return super().close_and_restart(
@@ -71,14 +73,14 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
     def n_clusters(self, value):
         self.model.set_params(n_clusters=int(value))
         self.close_and_restart()
-    @property 
+
+    @property
     def direct_to_queue(self) -> bool:
         return self._direct_to_queue
-    
+
     @direct_to_queue.setter
     def direct_to_queue(self, flag: bool):
         self._direct_to_queue = flag
-
 
     def server_registrations(self) -> None:
         self._register_method("clear_caches")
@@ -89,9 +91,9 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
     # ==========================Useful behavior for clustering, caching, restarting ========================== #
 
     def unpack_run(self, *args, **kwargs):
-        """Mock unpack run method for clustering that returns a [1,] array for x and a [1, 10] array for y."""
+        """Mock unpack run method for clustering that returns a [1,] array for x and a [10,] array for y."""
         x = np.random.rand(1)
-        y = np.random.rand(1, 10)
+        y = np.random.rand(10)
         return x, y
 
     def measurement_plan(self, point):
