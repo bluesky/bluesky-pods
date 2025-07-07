@@ -141,7 +141,10 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
 # ==========================This is the necessary code to start the agent========================== #
 
 use_tiled = os.getenv("USE_TILED", None) in (True, "yes", 1, "True", "true") or False
-agent = ClusterAgentMock(k_clusters=3, use_tiled=use_tiled)
+data_dim = int(os.getenv("DATA_DIM", 1))
+if data_dim not in (1, 2):
+    raise ValueError("data_dim must be either 1 or 2.")
+agent = ClusterAgentMock(k_clusters=3, use_tiled=use_tiled, data_dim=data_dim)
 
 
 @startup_decorator
