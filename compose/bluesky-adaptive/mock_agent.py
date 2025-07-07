@@ -1,19 +1,18 @@
 import logging
 import os
+from typing import Literal
 
 import numpy as np
-
-from bluesky_adaptive.utils.offline import OfflineAgent
 from bluesky_adaptive.agents.sklearn import ClusterAgentBase
 from bluesky_adaptive.server import (
     register_variable,
     shutdown_decorator,
     startup_decorator,
 )
-from tiled.client import from_profile, from_uri
+from bluesky_adaptive.utils.offline import OfflineAgent
 from httpx import ConnectError, HTTPStatusError
-
 from sklearn.cluster import KMeans
+from tiled.client import from_profile, from_uri
 
 logger = logging.getLogger(__name__)
 
@@ -21,15 +20,26 @@ logger = logging.getLogger(__name__)
 class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
     """Mock agent for testing purposes. Inherits from ClusterAgentBase and OfflineAgent."""
 
-    def __init__(self, k_clusters: int, *args, use_tiled: bool = False, **kwargs):
+    def __init__(
+        self,
+        k_clusters: int,
+        *args,
+        use_tiled: bool = False,
+        data_dim: Literal[1, 2] = 1,
+        **kwargs,
+    ):
         """Initialize the mock agent with optional metadata.
         Parameters
         ----------
         use_tiled : bool, optional
             Whether to use Tiled for writing agent data to storage, by default False.
             Does not read exp data from storage regardless.
+        data_dim : Literal[1, 2], optional
+            Dimension of the independent variable to be used by the agent, by default 1.
+            This is limited to 1 or 2, to facilitate plotting and testing.
         """
         estimator = KMeans(k_clusters, n_init="auto", random_state=42)
+        self.data_dim = data_dim
         if use_tiled:
             logger.info("Using Tiled for agent data storage.")
             try:
@@ -91,9 +101,36 @@ class ClusterAgentMock(ClusterAgentBase, OfflineAgent):
     # ==========================Useful behavior for clustering, caching, restarting ========================== #
 
     def unpack_run(self, *args, **kwargs):
-        """Mock unpack run method for clustering that returns a [1,] array for x and a [10,] array for y."""
-        x = np.random.rand(1)
-        y = np.random.rand(10)
+        """Mock unpack run method for clustering that returns position dependent gaussian mixture data."""
+        x = np.random.rand(self.data_dim)
+        x_pos = np.sum(x) / self.data_dim  # Average position for 1D or 2D
+
+        # Define 5 Gaussian peaks with random centers and widths
+        n_points = 100
+        x_scan = np.linspace(0, 1, n_points)
+        y = np.zeros(n_points)
+
+        # Parameters for 5 Gaussians: (peak_center, peak_width, base_height, x_relevant_center)
+        gaussians = [
+            (0.2, 0.05, 1.0, 0.0),  # Most intense at x=0
+            (0.4, 0.08, 0.7, 0.25),  # Most intense at x=0.25
+            (0.6, 0.06, 0.8, 0.5),  # Most intense at x=0.5
+            (0.7, 0.04, 0.9, 0.75),  # Most intense at x=0.75
+            (0.9, 0.07, 0.6, 1.0),  # Most intense at x=1
+        ]
+
+        # Width of position-dependent scaling
+        x_width = 0.2
+
+        # Sum up contributions from each Gaussian with position-dependent heights
+        for peak_center, peak_width, base_height, x_relevant in gaussians:
+            # Calculate height scaling based on x position
+            height_scale = np.exp(-((x_pos - x_relevant) ** 2) / (2 * x_width**2))
+            height = base_height * height_scale
+
+            # Add peak to spectrum
+            y += height * np.exp(-((x_scan - peak_center) ** 2) / (2 * peak_width**2))
+
         return x, y
 
     def measurement_plan(self, point):
