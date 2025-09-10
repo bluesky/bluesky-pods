@@ -1,23 +1,22 @@
 ---
-version: '3'
+version: "3"
 volumes:
   bitnami-kafka:
   data:
   mongo:
 
-
 services:
   # some simulated IOCs
   caproto-hello-world:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     tty: true
     init: true
   caproto-0:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.mini_beamline -v
@@ -25,7 +24,7 @@ services:
     init: true
   caproto-1:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v
@@ -33,7 +32,7 @@ services:
     init: true
   caproto-2:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:horiz-"
@@ -41,7 +40,7 @@ services:
     init: true
   caproto-3:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.random_walk -v  --prefix="random_walk:vert-"
@@ -49,7 +48,7 @@ services:
     init: true
   caproto-4:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.simple -v
@@ -57,7 +56,7 @@ services:
     init: true
   caproto-5:
     image: caproto
-    build: 
+    build:
       context: ../caproto
       dockerfile: Containerfile
     command: python3 -m caproto.ioc_examples.thermo_sim -v
@@ -155,6 +154,7 @@ services:
       - ../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro
       - ../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml:ro
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
+      - ../../bluesky_config/sim_datasets:/usr/local/share/sim_datasets:ro
     depends_on:
       kafka:
         condition: service_started

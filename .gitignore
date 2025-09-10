@@ -7,3 +7,8 @@ bluesky_config/**/pid/
 __pycache__
 image_builders/pip_cache
 .ipynb_checkpoints/
+
+# Git ignore the xarray netcdf files, stored as .zip
+*.nc
+
+.DS_Store

@@ -71,6 +71,7 @@ podman run --pod pod_acq-pod  \
        -v $parent_path/../../bluesky_config/databroker/mad.yml:/usr/local/share/intake/mad.yml \
        -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
+       -v $parent_path/../../bluesky_config/sim_datasets:/usr/local/share/sim_datasets:ro \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_AUTO_ADDR_LIST=YES \
        -e PYTHONPATH=/usr/local/share/ipython\
