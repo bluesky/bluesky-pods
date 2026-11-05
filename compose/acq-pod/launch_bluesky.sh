@@ -58,19 +58,20 @@ fi
 
 
 podman run --pod pod_acq-pod  \
+       --security-opt label=disable \
        --net acq-pod_default \
        --network-alias sneaky \
        -ti  --rm \
        -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
        -e DISPLAY=$LOCAL_DISPLAY \
-       -v $XAUTH:/tmp/.docker.xauth \
+       -v "$XAUTH:/tmp/.docker.xauth:ro,z" \
        -e XAUTHORITY=/tmp/.docker.xauth \
        -v `pwd`:'/app' -w '/app' \
-       -v ${BLUESKY_PROFILE_DIR:-$parent_path/../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_default \
-       -v $parent_path/../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py \
-       -v $parent_path/../../bluesky_config/databroker/mad.yml:/usr/local/share/intake/mad.yml \
-       -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml \
-       -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi \
+       -v ${BLUESKY_PROFILE_DIR:-$parent_path/../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_default:z \
+       -v $parent_path/../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro,z \
+       -v $parent_path/../../bluesky_config/databroker/mad.yml:/usr/local/share/intake/mad.yml:ro,z \
+       -v $parent_path/../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z \
+       -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi:ro,z \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_AUTO_ADDR_LIST=YES \
        -e PYTHONPATH=/usr/local/share/ipython\

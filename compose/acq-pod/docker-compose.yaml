@@ -74,7 +74,7 @@ services:
 
   # kafka
   kafka:
-    image: "docker.io/bitnami/kafka:latest"
+    image: "docker.io/bitnamilegacy/kafka:3.9.0"
     volumes:
       - bitnami-kafka:/bitnami/kafka
     environment:
@@ -106,7 +106,7 @@ services:
       dockerfile: Containerfile
     volumes:
       - data:/nsls2/data/mad
-      - ../../bluesky_config/tiled:/usr/local/share/tiled
+      - ../../bluesky_config/tiled:/usr/local/share/tiled:ro,z
     command: tiled serve config /usr/local/share/tiled/tld.yml
 
   # inserter
@@ -116,7 +116,7 @@ services:
       context: ../bluesky
       dockerfile: Containerfile.latest
     volumes:
-      - ../..//bluesky_config/scripts:/app
+      - ../../bluesky_config/scripts:/app:ro,z
     command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
     working_dir: /app
     init: true
@@ -153,7 +153,7 @@ services:
       - ${BLUESKY_PROFILE_DIR:-../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_qserver:ro
       - ../../bluesky_config/databroker:/usr/local/share/intake:ro
       - ../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro
-      - ../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml:ro
+      - ../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
     depends_on:
       kafka:
@@ -206,7 +206,7 @@ services:
       - BS_AGENT_STARTUP_SCRIPT_PATH=/src/bluesky-adaptive/reactive_random_walk.py
     volumes:
       - ../bluesky-adaptive/:/src/bluesky-adaptive/:ro
-      - ../../bluesky_config/databroker/mad-tiled.yml:/usr/etc/tiled/profiles/mad-tiled.yml
+      - ../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z
     depends_on:
       qs_api:
         condition: service_started
