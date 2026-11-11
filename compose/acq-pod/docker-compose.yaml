@@ -99,7 +99,7 @@ services:
     build:
       context: ../bluesky
       dockerfile: Containerfile.latest
-    command: start-re-manager --startup-profile qserver --keep-re --zmq-publish-console ON --redis-addr redis
+    command: start-re-manager --startup-profile qserver --zmq-publish-console ON --redis-addr redis
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - PYTHONPATH=/usr/local/share/ipython
@@ -133,11 +133,25 @@ services:
     ports:
       - "127.0.0.1:11973:11973"
     volumes:
-      - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro
-      - ../../bluesky_config/nginx/locs.d:/etc/nginx/locs.d:ro
-      - ../../bluesky_config/nginx/index.html:/var/www/html/index.html:ro
+      - ../../bluesky_config/nginx/compose.conf:/etc/nginx/nginx.conf:ro,z
+      - ../../bluesky_config/nginx/locs.d:/etc/nginx/locs.d:ro,z
+      - ../../bluesky_config/nginx/index.html:/var/www/html/index.html:ro,z
     depends_on:
       jupyter:
         condition: service_started
       qs_api:
         condition: service_started
+  
+  ophyd-service:
+    image: bluesky
+    ports:
+      - "127.0.0.1:60620:60620"
+    build:
+      context: ../bluesky
+      dockerfile: Containerfile.latest
+    environment:
+      - OPHYD_SERVICE_CONFIG=/usr/local/share/ophyd-service/config.yml
+      - OPHYD_SERVICE_SINGLE_USER_API_KEY=a
+    volumes:
+      - ../../bluesky_config/ophyd-service:/usr/local/share/ophyd-service:ro,z
+    command: uvicorn --host 0.0.0.0 --port 60620 ophyd_service.server:app

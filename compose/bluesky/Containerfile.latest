@@ -28,8 +28,8 @@ RUN pip3 install \
 # Install Bluesky dependencies
 RUN pip3 install tiled[all]
 RUN pip3 install ophyd
+RUN pip3 install ophyd-service
 RUN pip3 install bluesky
-RUN pip3 install bluesky-adaptive
 RUN pip3 install bluesky-queueserver
 RUN pip3 install bluesky-httpserver
 RUN pip3 install bluesky-widgets

@@ -74,8 +74,8 @@ podman run --pod pod_acq-pod  \
        -v $parent_path/../../bluesky_config/happi:/usr/local/share/happi:ro,z \
        -e XDG_RUNTIME_DIR=/tmp/runtime-$USER \
        -e EPICS_CA_AUTO_ADDR_LIST=YES \
-       -e PYTHONPATH=/usr/local/share/ipython\
-       -e QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615\
-       -e QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625\
+       -e PYTHONPATH=/usr/local/share/ipython \
+       -e QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queue_manager:60615 \
+       -e QSERVER_ZMQ_INFO_ADDRESS=tcp://queue_manager:60625 \
        $imagename \
        $CMD \

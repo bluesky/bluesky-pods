@@ -4,7 +4,6 @@ from functools import partial
 from queue import Empty
 
 import bluesky.plans as bp
-import databroker
 import happi
 import happi.loader
 import IPython
