@@ -1,10 +1,7 @@
 ---
 version: '3'
 volumes:
-  bitnami-kafka:
   data:
-  mongo:
-
 
 services:
   # some simulated IOCs
@@ -72,59 +69,16 @@ services:
       dockerfile: Containerfile.latest
     command: bluesky-0MQ-proxy 4567 5678
 
-  # kafka
-  kafka:
-    image: "docker.io/bitnamilegacy/kafka:3.9.0"
-    volumes:
-      - bitnami-kafka:/bitnami/kafka
-    environment:
-      - KAFKA_CFG_KRAFT_MODE_ENABLED=true
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,PLAINTEXT_HOST://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-      - KAFKA_CFG_MESSAGE_MAX_BYTES=1048588
-
-  # mongo
-  mongo:
-    image: docker.io/library/mongo:latest
-    tty: true
-    volumes:
-      - mongo:/data/db
-
   # tiled
-  tld:
-    image: sub-tiled
+  tiled:
+    image: tiled
     build:
-      context: ../sub-tiled
+      context: ../tiled
       dockerfile: Containerfile
     volumes:
       - data:/nsls2/data/mad
       - ../../bluesky_config/tiled:/usr/local/share/tiled:ro,z
-    command: tiled serve config /usr/local/share/tiled/tld.yml
-
-  # inserter
-  mongo_inserter:
-    image: bluesky
-    build:
-      context: ../bluesky
-      dockerfile: Containerfile.latest
-    volumes:
-      - ../../bluesky_config/scripts:/app:ro,z
-    command: python3 mongo_consumer.py --kafka_server=kafka:29092 --kafka_group=acq_local_consumers --mongo_uri=mongodb://mongo:27017
-    working_dir: /app
-    init: true
-    depends_on:
-      mongo:
-        condition: service_started
-      kafka:
-        condition: service_started
+    command: tiled serve catalog --init /nsls2/data/mad/catalog.db -w /nsls2/data/mad/data -w duckdb:////nsls2/data/mad/data.duckdb --api-key secret --host 0.0.0.0
 
   # redis
   redis:
@@ -156,8 +110,6 @@ services:
       - ../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
     depends_on:
-      kafka:
-        condition: service_started
       redis:
         condition: service_started
 
@@ -187,26 +139,5 @@ services:
     depends_on:
       jupyter:
         condition: service_started
-      qs_api:
-        condition: service_started
-      tld:
-        condition: service_started
-      reactive-agent:
-        condition: service_started
-
-  reactive-agent:
-    image: bluesky
-    build:
-      context: ../bluesky
-      dockerfile: Containerfile.latest
-    command: uvicorn bluesky_adaptive.server:app --host 0.0.0.0 --root-path /reactive-agent
-    environment:
-      - TILED_API_KEY="ABCDABCD"
-      - HTTPSERVER_API_KEY=mad
-      - BS_AGENT_STARTUP_SCRIPT_PATH=/src/bluesky-adaptive/reactive_random_walk.py
-    volumes:
-      - ../bluesky-adaptive/:/src/bluesky-adaptive/:ro
-      - ../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z
-    depends_on:
       qs_api:
         condition: service_started

@@ -13,11 +13,9 @@ RUN pip3 install \
     httpie \
     fastapi \
     uvicorn[standard] \
-    bluesky-tiled-plugins\
+    bluesky-tiled-plugins \
     python-jose[cryptography] \
     passlib[bcrypt] \
-    pykafka \
-    confluent_kafka \
     scikit-learn \
     scipy\
     caproto[standard]!=1.2.0 \
@@ -36,11 +34,9 @@ RUN pip3 install bluesky-queueserver
 RUN pip3 install bluesky-httpserver
 RUN pip3 install bluesky-widgets
 RUN pip3 install happi
-RUN pip3 install --pre  'databroker[all]>=2.0.0b1,<3.0.0'
 
 # Create a configuration directory and add configuration files
 RUN mkdir -p /etc/bluesky
-ADD kafka.yml /etc/bluesky/kafka.yml
 
 # Build font cache for matplotlib
 RUN python3 -c "import matplotlib.font_manager"
