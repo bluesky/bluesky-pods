@@ -71,10 +71,8 @@ services:
 
   # tiled
   tiled:
-    image: tiled
-    build:
-      context: ../tiled
-      dockerfile: Containerfile
+    image: ghcr.io/bluesky/tiled:latest
+    user: root
     volumes:
       - data:/nsls2/data/mad
       - ../../bluesky_config/tiled:/usr/local/share/tiled:ro,z

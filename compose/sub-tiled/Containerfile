@@ -1,6 +1,0 @@
-FROM ghcr.io/bluesky/databroker:latest
-
-USER root
-RUN apt update
-RUN apt install git npm --yes
-RUN TILED_BUILD_PUBLIC_PATH=/tiled/ui/ /app/bin/python -m pip install --upgrade "tiled[server]==0.2.21" --no-binary tiled

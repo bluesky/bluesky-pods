@@ -1,2 +1,0 @@
-FROM bluesky
-RUN pip3 install typhos

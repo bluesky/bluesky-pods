@@ -1,4 +1,0 @@
-FROM ghcr.io/bluesky/tiled:latest
-
-USER root
-EXPOSE 8000

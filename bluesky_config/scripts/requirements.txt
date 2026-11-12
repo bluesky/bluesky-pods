@@ -1,3 +1,0 @@
-bluesky-kafka
-msgpack
-msgpack-numpy
