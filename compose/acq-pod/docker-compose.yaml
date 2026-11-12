@@ -75,7 +75,6 @@ services:
     user: root
     volumes:
       - data:/nsls2/data/mad
-      - ../../bluesky_config/tiled:/usr/local/share/tiled:ro,z
     command: tiled serve catalog --init /nsls2/data/mad/catalog.db -w /nsls2/data/mad/data -w duckdb:////nsls2/data/mad/data.duckdb --api-key secret --host 0.0.0.0
 
   # redis
@@ -88,7 +87,6 @@ services:
     command: start-notebook.py --IdentityProvider.token='' --NotebookApp.base_url='/jlab' --NotebookApp.allow_origin='*'
     volumes:
       - ../..//bluesky_config/:/home/jovyan/config
-      - ../../bluesky_config/databroker:/usr/local/share/intake
 
   # QS parts
   # Loads QServer looking at an ipython profile named profile_qserver, optionally loaded from BLUESKY_PROFILE_DIR
@@ -103,9 +101,7 @@ services:
       - PYTHONPATH=/usr/local/share/ipython
     volumes:
       - ${BLUESKY_PROFILE_DIR:-../../bluesky_config/ipython/profile_default}:/usr/local/share/ipython/profile_qserver:ro
-      - ../../bluesky_config/databroker:/usr/local/share/intake:ro
       - ../../bluesky_config/ipython/localdevs.py:/usr/local/share/ipython/localdevs.py:ro
-      - ../../bluesky_config/databroker/mad-tiled.yml:/etc/tiled/profiles/mad-tiled.yml:ro,z
       - ../../bluesky_config/happi:/usr/local/share/happi:ro
     depends_on:
       redis:
